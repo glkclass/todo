@@ -1,0 +1,9 @@
+Purpose: 
+Develop a tool for todo table generation/modification/analisys
+
+Arch description:
+1. Todo table has txt format, is read, edited and highlighted(appropriate syntax highlight should be created) inside SublimeText(ST).
+2. All actions with table are performed by hands in ST or using Py methods (assigned to hot keys or located in right-button-menu) processing todo.txt.
+4. Table content is stored in db file (json or any other format) and should be loaded to txt file.
+5. Todo table view/format is defined by set of configuration settings (default or defined by user)
+6. A set of methods should be implemented(seems as ST plugin): generate todo tmpl...
