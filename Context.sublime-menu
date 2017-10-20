@@ -1,0 +1,33 @@
+[
+    {
+        "caption": "Todo",
+        "id": "todo_context",
+        "children":
+        [
+            {
+                "command": "open_file",
+                "args": { "file": "${project}"},
+                "caption": "Test"
+            },
+            {
+                "command": "todo_tbl_new",
+                "id": "todo_tbl_new",
+                "caption": "New TODO table"
+            },
+            {
+                "command": "todo_tbl_open",
+                "args": {"file": "$packages"},
+                "id": "todo_tbl_open",
+                "caption": "Open TODO table"
+            },
+            { "caption": "-" },
+            {
+                "command": "todo_tbl_save",
+                "id": "todo_tbl_save",
+                "caption": "Save TODO table"
+            },
+
+
+        ]
+    }
+]
