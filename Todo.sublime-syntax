@@ -1,0 +1,98 @@
+%YAML 1.2
+---
+file_extensions:
+  - pom
+scope: text.todo
+
+variables:
+  v_singleline: '-----+'
+  v_pointline: '\.\.\.\.\.+'
+  v_doubleline: '=====+'
+
+  v_todo_today_header: 'TODO Today\:'
+  v_todo_today_tbl_header: '\|=EST=\|=STA=\|=POM=\|=TASK='
+
+  v_todo_tomorrow_header: 'TODO Sometime\:'
+  v_todo_tomorrow_tbl_header: '=DATE= +=TASK='
+
+  v_todo_history_header: 'TODO History\:'
+  v_todo_history_tbl_header: '\|=EST=\|=STA=\|=POM=\|=TASK='
+
+contexts:
+  # The prototype context is prepended to all contexts but those setting
+  # meta_include_prototype: false.
+  prototype:
+    - include: history_timestamp
+    - include: date_time_stamp
+    - include: datestamp
+    - include: week
+
+  main:
+    - include: todo_today
+    - include: todo_tomorrow
+    - include: todo_history
+  todo_today:
+    - match: '{{v_todo_today_header}}'
+      scope: todo.today todo.header
+      push: todo_today_inside
+      
+  todo_today_inside:
+    - meta_include_prototype: true
+    - meta_scope:  todo.today
+    - match: '{{v_todo_today_tbl_header}}'
+      scope:   todo.header
+    - match:  '{{v_singleline}}'
+      pop: true
+
+  todo_tomorrow:
+    - match: '{{v_todo_tomorrow_header}}'
+      scope: todo.tomorrow todo.header
+      push: todo_tomorrow_inside
+      
+  todo_tomorrow_inside:
+    - meta_include_prototype: true
+    - meta_scope:  todo.tomorrow
+    - match: '{{v_todo_tomorrow_tbl_header}}'
+      scope:   todo.header
+    - match:  '{{v_singleline}}'
+      pop: true
+
+  todo_history:
+    - match: '{{v_todo_history_header}}'
+      scope: todo.history todo.header
+      push: todo_history_inside
+      
+  todo_history_inside:
+    - meta_include_prototype: true
+    - meta_scope: todo.history
+    - match: '{{v_todo_today_tbl_header}}'
+      scope:   todo.header
+    - match:  '{{v_pointline}}'
+      pop: true
+  
+  datestamp:
+    - match: '\d{4}/\d{2}/\d{2}'
+      scope: todo.date
+
+  date_time_stamp:
+    - match: '\d{4}/\d{2}/\d{2}, \w{3}, \d{2}\:\d{2}'
+      scope: todo.date
+
+  history_timestamp:
+    - match: '\d{4}/\d{2}/\d{2}, \w{3}, \d{2}\:\d{2} - \d{2}\:\d{2}, \d{2}\:\d{2}'
+      scope: todo.date
+
+  week:
+    - match: 'Week \d{2}'
+      scope: todo.date
+
+  # singleline:
+  #   - match: '{{v_singleline}}'
+  #     scope: comment
+
+  # doubleline:
+  #   - match: '{{v_doubleline}}'
+  #     scope: comment
+
+
+

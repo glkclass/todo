@@ -3,5 +3,6 @@
 	[
 		"pom"
 	],
-	"todo_pom": "C:/avv/design/_avv/todo/todo.pom"
+	"path2do_pom": "C:/avv/prtble/st3/Data/Packages/Todo",
+	"PYTHONPATH": "C:/avv/design/_avv/scrpt/_Scrpt;C:\\Python35\\python35.zip;C:\\Python35\\DLLs;C:\\Python35\\lib;C:\\Python35;C:\\Python35\\lib\\site-packages"
 }

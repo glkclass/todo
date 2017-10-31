@@ -5,29 +5,57 @@
         "children":
         [
             {
-                "command": "open_file",
-                "args": { "file": "${project}"},
+                "command": "todo_tbl_test",
                 "caption": "Test"
+            },
+            {   "caption": "-" },
+            {
+                "command": "todo_tbl_new",
+                "id": "todo_today_tbl_new",
+                "caption": "TODO Today table New"
             },
             {
                 "command": "todo_tbl_new",
-                "id": "todo_tbl_new",
-                "caption": "New TODO table"
+                "args": {"show_todo_sometime": "True"},
+                "id": "todo_today_sometime_tbl_new",
+                "caption": "TODO Today&Sometime table New"
             },
+            {
+                "command": "todo_tbl_new",
+                "args": {"show_todo_sometime": "True", "show_todo_history": "True"},
+                "id": "todo_today_sometime_history_tbl_new",
+                "caption": "TODO Today&Sometime&History table New"
+            },
+            {   "caption": "-" },
+            {
+                "command": "todo_tbl_view",
+                "id": "todo_today_tbl_view",
+                "caption": "TODO Today table View"
+            },
+            {
+                "command": "todo_tbl_view",
+                "args": {"show_todo_sometime": "True"},
+                "id": "todo_today_sometime_tbl_view",
+                "caption": "TODO Today&Sometime table View"
+            },
+            {
+                "command": "todo_tbl_view",
+                "args": {"show_todo_sometime": "True", "show_todo_history": "True"},
+                "id": "todo_today_sometime_history_tbl_view",
+                "caption": "TODO Today&Sometime&History table View"
+            },
+            {   "caption": "-" },
             {
                 "command": "todo_tbl_open",
                 "args": {"file": "$packages"},
                 "id": "todo_tbl_open",
-                "caption": "Open TODO table"
+                "caption": "TODO table Open"
             },
-            { "caption": "-" },
             {
                 "command": "todo_tbl_save",
                 "id": "todo_tbl_save",
-                "caption": "Save TODO table"
+                "caption": "TODO table Save"
             },
-
-
         ]
     }
 
