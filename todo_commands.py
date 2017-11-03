@@ -27,12 +27,10 @@ def plugin_loaded():
     todo = Todo.Todo(path2do_pom=settings.get('path2do_pom'))
 
 
-class TodoTblTestCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        pass
-        # print(settings.get("path2do_pom"))
-        # print(sys.version)
-        # print(sys.path)
+class TodoMenuCmdCommand(sublime_plugin.WindowCommand):
+    def run(self, cmd, task):
+        todo.todo_menu_cmd(cmd, task)
+        sublime.status_message("Update task %s: %s" % (task, cmd))
 
 
 class TodoTblNewCommand(sublime_plugin.WindowCommand):
@@ -57,3 +55,11 @@ class TodoTblSaveCommand(sublime_plugin.WindowCommand):
 class TodoTblOpenCommand(sublime_plugin.WindowCommand):
     def run(self, file):
         sublime.active_window().open_file(todo.todo_pom)
+
+
+class TodoTblTestCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        return
+        # print(settings.get("path2do_pom"))
+        # print(sys.version)
+        # print(sys.path)

@@ -1,69 +1,299 @@
 [
-   {
-        "caption": "Todo",
-        "id": "todo_context",
-        "children":
-        [
-            {
-                "command": "todo_tbl_new",
-                "id": "todo_today_tbl_new",
-                "caption": "TODO Today table New"
+  {
+    "caption": "Todo",
+    "children": [
+      {
+        "caption": "TODO table New",
+        "children": [
+          {
+            "args": {
+              "show_todo_history": "True",
+              "show_todo_sometime": "True"
             },
-            {
-                "command": "todo_tbl_new",
-                "args": {"show_todo_sometime": "True"},
-                "id": "todo_today_sometime_tbl_new",
-                "caption": "TODO Today&Sometime table New"
+            "caption": "Today&Sometime&History",
+            "command": "todo_tbl_new",
+            "id": "todo_today_sometime_history_tbl_new"
+          },
+          {
+            "caption": "Today",
+            "command": "todo_tbl_new",
+            "id": "todo_today_tbl_new"
+          },
+          {
+            "args": {
+              "show_todo_sometime": "True"
             },
-            {
-                "command": "todo_tbl_new",
-                "args": {"show_todo_sometime": "True", "show_todo_history": "True"},
-                "id": "todo_today_sometime_history_tbl_new",
-                "caption": "TODO Today&Sometime&History table New"
+            "caption": "Today&Sometime",
+            "command": "todo_tbl_new",
+            "id": "todo_today_sometime_tbl_new"
+          },
+          {
+            "args": {
+              "show_todo_history": "True"
             },
-            {
-                "command": "todo_tbl_new",
-                "args": {"show_todo_history": "True"},
-                "id": "todo_today_sometime_tbl_new",
-                "caption": "TODO Today&History table New"
-            },
-            {   "caption": "-" },
-            {
-                "command": "todo_tbl_view",
-                "id": "todo_today_tbl_view",
-                "caption": "TODO Today table View"
-            },
-            {
-                "command": "todo_tbl_view",
-                "args": {"show_todo_sometime": "True"},
-                "id": "todo_today_sometime_tbl_view",
-                "caption": "TODO Today&Sometime table View"
-            },
-            {
-                "command": "todo_tbl_view",
-                "args": {"show_todo_sometime": "True", "show_todo_history": "True"},
-                "id": "todo_today_sometime_history_tbl_view",
-                "caption": "TODO Today&Sometime&History table View"
-            },
-            {
-                "command": "todo_tbl_view",
-                "args": {"show_todo_history": "True"},
-                "id": "todo_today_history_tbl_view",
-                "caption": "TODO Today&History table View"
-            },
-            {   "caption": "-" },
-            {
-                "command": "todo_tbl_open",
-                "args": {"file": "$packages"},
-                "id": "todo_tbl_open",
-                "caption": "TODO table Open"
-            },
-            {
-                "command": "todo_tbl_save",
-                "id": "todo_tbl_save",
-                "caption": "TODO table Save"
-            },
+            "caption": "Today&History",
+            "command": "todo_tbl_new",
+            "id": "todo_today_sometime_tbl_new"
+          }
         ]
-    }
-
+      },
+      {
+        "caption": "-"
+      },
+      {
+        "caption": "TODO table View",
+        "children": [
+          {
+            "args": {
+              "show_todo_history": "True",
+              "show_todo_sometime": "True"
+            },
+            "caption": "Today&Sometime&History",
+            "command": "todo_tbl_view",
+            "id": "todo_today_sometime_history_tbl_view"
+          },
+          {
+            "caption": "Today",
+            "command": "todo_tbl_view",
+            "id": "todo_today_tbl_view"
+          },
+          {
+            "args": {
+              "show_todo_sometime": "True"
+            },
+            "caption": "Today&Sometime",
+            "command": "todo_tbl_view",
+            "id": "todo_today_sometime_tbl_view"
+          },
+          {
+            "args": {
+              "show_todo_history": "True"
+            },
+            "caption": "Today&History",
+            "command": "todo_tbl_view",
+            "id": "todo_today_history_tbl_view"
+          }
+        ],
+        "command": "todo_tbl_view",
+        "id": "todo_today_tbl_view"
+      },
+      {
+        "caption": "-"
+      },
+      {
+        "args": {
+          "file": "$packages"
+        },
+        "caption": "TODO table Open",
+        "command": "todo_tbl_open",
+        "id": "todo_tbl_open"
+      },
+      {
+        "caption": "TODO table Save",
+        "command": "todo_tbl_save",
+        "id": "todo_tbl_save"
+      },
+      {
+        "caption": "-"
+      },
+      {
+        "caption": "Tasks",
+        "children": [
+          {
+            "caption": "fix for tomorrow bug",
+            "children": [
+              {
+                "args": {
+                  "cmd": "short_break",
+                  "task": "fix for tomorrow bug"
+                },
+                "caption": "Short break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_short_break"
+              },
+              {
+                "args": {
+                  "cmd": "long_break",
+                  "task": "fix for tomorrow bug"
+                },
+                "caption": "Long break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_long_break"
+              },
+              {
+                "args": {
+                  "cmd": "ok",
+                  "task": "fix for tomorrow bug"
+                },
+                "caption": "Ok",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_ok"
+              }
+            ]
+          },
+          {
+            "caption": "supercom folder discuss / plan",
+            "children": [
+              {
+                "args": {
+                  "cmd": "short_break",
+                  "task": "supercom folder discuss / plan"
+                },
+                "caption": "Short break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_short_break"
+              },
+              {
+                "args": {
+                  "cmd": "long_break",
+                  "task": "supercom folder discuss / plan"
+                },
+                "caption": "Long break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_long_break"
+              },
+              {
+                "args": {
+                  "cmd": "ok",
+                  "task": "supercom folder discuss / plan"
+                },
+                "caption": "Ok",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_ok"
+              }
+            ]
+          },
+          {
+            "caption": "dist learning runs",
+            "children": [
+              {
+                "args": {
+                  "cmd": "short_break",
+                  "task": "dist learning runs"
+                },
+                "caption": "Short break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_short_break"
+              },
+              {
+                "args": {
+                  "cmd": "long_break",
+                  "task": "dist learning runs"
+                },
+                "caption": "Long break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_long_break"
+              },
+              {
+                "args": {
+                  "cmd": "ok",
+                  "task": "dist learning runs"
+                },
+                "caption": "Ok",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_ok"
+              }
+            ]
+          },
+          {
+            "caption": "todo: add st3 menu support: task elaboration",
+            "children": [
+              {
+                "args": {
+                  "cmd": "short_break",
+                  "task": "todo: add st3 menu support: task elaboration"
+                },
+                "caption": "Short break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_short_break"
+              },
+              {
+                "args": {
+                  "cmd": "long_break",
+                  "task": "todo: add st3 menu support: task elaboration"
+                },
+                "caption": "Long break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_long_break"
+              },
+              {
+                "args": {
+                  "cmd": "ok",
+                  "task": "todo: add st3 menu support: task elaboration"
+                },
+                "caption": "Ok",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_ok"
+              }
+            ]
+          },
+          {
+            "caption": "generate main.sublime-menu",
+            "children": [
+              {
+                "args": {
+                  "cmd": "short_break",
+                  "task": "generate main.sublime-menu"
+                },
+                "caption": "Short break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_short_break"
+              },
+              {
+                "args": {
+                  "cmd": "long_break",
+                  "task": "generate main.sublime-menu"
+                },
+                "caption": "Long break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_long_break"
+              },
+              {
+                "args": {
+                  "cmd": "ok",
+                  "task": "generate main.sublime-menu"
+                },
+                "caption": "Ok",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_ok"
+              }
+            ]
+          },
+          {
+            "caption": "add todo menu methods: inc",
+            "children": [
+              {
+                "args": {
+                  "cmd": "short_break",
+                  "task": "add todo menu methods: inc"
+                },
+                "caption": "Short break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_short_break"
+              },
+              {
+                "args": {
+                  "cmd": "long_break",
+                  "task": "add todo menu methods: inc"
+                },
+                "caption": "Long break",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_long_break"
+              },
+              {
+                "args": {
+                  "cmd": "ok",
+                  "task": "add todo menu methods: inc"
+                },
+                "caption": "Ok",
+                "command": "todo_menu_cmd",
+                "id": "todo_menu_ok"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "id": "todo_context"
+  }
 ]

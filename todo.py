@@ -8,11 +8,13 @@ import datetime
 class Todo(Scrpt):
     """Support TODO-table usage"""
     param = {
-                'todo.pom':         'todo.pom',
-                'todo.db':          'todo.json',
-                'todo.cache':       'todo_cache.json',
-                'cache_size':       8,
-                'todo_history':     {'re': '2017/\d\d/\d\d', 'max_length': 0}
+                'todo.pom':                 'todo.pom',
+                'todo.db':                  'todo.json',
+                'todo.cache':               'todo_cache.json',
+                'todo.sublime-menu':        'Main.sublime-menu',
+                'todo_base.sublime-menu':   'Main_base.sublime-menu',
+                'cache_size':               8,
+                'todo_history':             {'re': '2017/\d\d/\d\d', 'max_length': 0}
             }
 
     tbl = {
@@ -72,6 +74,8 @@ class Todo(Scrpt):
                         'Holidays': ['2017/01/01', '2017/01/07']
                     }
 
+        self.todo_menu = os.path.join(path2do_pom, self.param['todo.sublime-menu']) if path2do_pom else self.param['todo.sublime-menu']
+        self.todo_menu_base = os.path.join(path2do_pom, self.param['todo_base.sublime-menu']) if path2do_pom else self.param['todo_base.sublime-menu']
         self.todo_pom = os.path.join(path2do_pom, self.param['todo.pom']) if path2do_pom else self.param['todo.pom']
         self.todo_db = os.path.join(path2do_pom, self.param['todo.db']) if path2do_pom else self.param['todo.db']
         self.todo_cache = os.path.join(path2do_pom, self.param['todo.cache']) if path2do_pom else self.param['todo.cache']
@@ -135,7 +139,7 @@ class Todo(Scrpt):
         for item in todo_tomorrow:
             todo_today_buffer.append(self.tbl['todo_']['today_ph_line'] + item['task'])
         # add empty placeholders
-        for i in range(7):
+        for i in range(10):
             todo_today_buffer.append(self.tbl['todo_']['today_ph_line'])
         todo_today_buffer.append(self.tbl['todo_']['singleline'])
         return todo_today_buffer
@@ -488,13 +492,42 @@ class Todo(Scrpt):
         todo_history_tbl = self._get_todo_history() if show_todo_history else []
         self.util.file.save(todo['tbl_buffer']['timestamp'] + [''] + todo['tbl_buffer']['today'] + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
 
+
+    def _update_todo_menu(self):
+        todo = self._extract_todo_info()
+        tasks = [item['task'] for item in todo['info']['today']]
+        todo_menu_base = self.util.file.load(self.todo_menu_base, 'json')
+
+        children = []
+        for task in tasks:
+            bar =   {
+                        "caption": task,
+                        "children":
+                        [
+                            {"caption": "Short break",  "command": "todo_menu_cmd", "id": "todo_menu_short_break",  "args": {"task": task, "cmd": "short_break"}},
+                            {"caption": "Long break",   "command": "todo_menu_cmd", "id": "todo_menu_long_break",   "args": {"task": task, "cmd": "long_break"}},
+                            {"caption": "Ok",           "command": "todo_menu_cmd", "id": "todo_menu_ok",           "args": {"task": task, "cmd": "ok"}}
+                        ]
+                    }
+            children.append(bar)
+        tasks_menu = {"caption": "Tasks", 'children': children}
+        todo_menu_base[0]['children'].append(tasks_menu)
+
+        self.util.file.save(todo_menu_base, self.todo_menu, 'json')
+        return
+
+    def todo_menu_cmd(self, cmd, task):
+        self.info(cmd)
+        self.info(task)
+        return
+
     def main(self, **kwargs):
         # self.todo_tbl_new(True, True)
         # self.todo_tbl_view(True, True)
-        self.todo_tbl_save()
+        # self.todo_tbl_save()
         # self.todo_db_holes.purge()
         # self.todo_db_holes.insert({'year': 2017, 'Holidays': ['2017/10/14'], 'Vacation': ['2017/10/10'], 'Sick': ['2017/10/03']})
-
+        self._update_todo_menu()
 
 
 
