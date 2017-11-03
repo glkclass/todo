@@ -12,24 +12,22 @@ variables:
   v_todo_today_header: 'TODO Today\:'
   v_todo_today_tbl_header: '\|=EST=\|=STA=\|=POM=\|=TASK='
 
-  v_todo_tomorrow_header: 'TODO Sometime\:'
-  v_todo_tomorrow_tbl_header: '=DATE= +=TASK='
+  v_todo_sometime_header: 'TODO Sometime\:'
+  v_todo_sometime_tbl_header: '=DATE= +=TASK='
 
   v_todo_history_header: 'TODO History\:'
   v_todo_history_tbl_header: '\|=EST=\|=STA=\|=POM=\|=TASK='
+  v_todo_history_dayoff: '((Weekend)|(Vacation)|(Sick dayoff)|(Missed))'
 
 contexts:
   # The prototype context is prepended to all contexts but those setting
   # meta_include_prototype: false.
-  prototype:
-    - include: history_timestamp
-    - include: date_time_stamp
-    - include: datestamp
-    - include: week
+  # prototype:
 
   main:
+    - include: date_time_stamp
     - include: todo_today
-    - include: todo_tomorrow
+    - include: todo_sometime
     - include: todo_history
   todo_today:
     - match: '{{v_todo_today_header}}'
@@ -44,15 +42,16 @@ contexts:
     - match:  '{{v_singleline}}'
       pop: true
 
-  todo_tomorrow:
-    - match: '{{v_todo_tomorrow_header}}'
-      scope: todo.tomorrow todo.header
-      push: todo_tomorrow_inside
+  todo_sometime:
+    - match: '{{v_todo_sometime_header}}'
+      scope: todo.sometime todo.header
+      push: todo_sometime_inside
       
-  todo_tomorrow_inside:
+  todo_sometime_inside:
     - meta_include_prototype: true
-    - meta_scope:  todo.tomorrow
-    - match: '{{v_todo_tomorrow_tbl_header}}'
+    - meta_scope:  todo.sometime
+    - include: sometime_datestamp
+    - match: '{{v_todo_sometime_tbl_header}}'
       scope:   todo.header
     - match:  '{{v_singleline}}'
       pop: true
@@ -65,7 +64,11 @@ contexts:
   todo_history_inside:
     - meta_include_prototype: true
     - meta_scope: todo.history
-    - match: '{{v_todo_today_tbl_header}}'
+    - include: history_dayoff_line 
+    - include: history_timestamp 
+    - include: date_weekday_stamp
+    - include: week
+    - match: '{{v_todo_history_tbl_header}}'
       scope:   todo.header
     - match:  '{{v_pointline}}'
       pop: true
@@ -73,26 +76,23 @@ contexts:
   datestamp:
     - match: '\d{4}/\d{2}/\d{2}'
       scope: todo.date
-
   date_time_stamp:
     - match: '\d{4}/\d{2}/\d{2}, \w{3}, \d{2}\:\d{2}'
       scope: todo.date
-
+  date_weekday_stamp:
+    - match: '\d{4}/\d{2}/\d{2}, \w{3}'
+      scope: todo.date
+  sometime_datestamp:
+    - match: '\d{4}/\d{2}/\d{2}'
+      scope: todo.header
   history_timestamp:
     - match: '\d{4}/\d{2}/\d{2}, \w{3}, \d{2}\:\d{2} - \d{2}\:\d{2}, \d{2}\:\d{2}'
       scope: todo.date
-
+  history_dayoff_line:
+    - match: '\d{4}/\d{2}/\d{2}, \w{3}    {{v_todo_history_dayoff}}'
+      scope: todo.history.dayoff
   week:
     - match: 'Week \d{2}'
       scope: todo.date
-
-  # singleline:
-  #   - match: '{{v_singleline}}'
-  #     scope: comment
-
-  # doubleline:
-  #   - match: '{{v_doubleline}}'
-  #     scope: comment
-
 
 

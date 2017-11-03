@@ -42,16 +42,16 @@ class TodoTblNewCommand(sublime_plugin.WindowCommand):
         sublime.status_message("Empty TODO table was generated")
 
 
-class TodoTblSaveCommand(sublime_plugin.WindowCommand):
-    def run(self):
-        todo.todo_tbl_save()
-        sublime.status_message("TODO table was saved")
-
-
 class TodoTblViewCommand(sublime_plugin.WindowCommand):
     def run(self, show_todo_sometime=False, show_todo_history=False):
         todo.todo_tbl_view(show_todo_sometime, show_todo_history)
         sublime.status_message("TODO table view")
+
+
+class TodoTblSaveCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        todo.todo_tbl_save()
+        sublime.status_message("TODO table was saved")
 
 
 class TodoTblOpenCommand(sublime_plugin.WindowCommand):

@@ -5,11 +5,6 @@
         "children":
         [
             {
-                "command": "todo_tbl_test",
-                "caption": "Test"
-            },
-            {   "caption": "-" },
-            {
                 "command": "todo_tbl_new",
                 "id": "todo_today_tbl_new",
                 "caption": "TODO Today table New"
@@ -25,6 +20,12 @@
                 "args": {"show_todo_sometime": "True", "show_todo_history": "True"},
                 "id": "todo_today_sometime_history_tbl_new",
                 "caption": "TODO Today&Sometime&History table New"
+            },
+            {
+                "command": "todo_tbl_new",
+                "args": {"show_todo_history": "True"},
+                "id": "todo_today_sometime_tbl_new",
+                "caption": "TODO Today&History table New"
             },
             {   "caption": "-" },
             {
@@ -43,6 +44,12 @@
                 "args": {"show_todo_sometime": "True", "show_todo_history": "True"},
                 "id": "todo_today_sometime_history_tbl_view",
                 "caption": "TODO Today&Sometime&History table View"
+            },
+            {
+                "command": "todo_tbl_view",
+                "args": {"show_todo_history": "True"},
+                "id": "todo_today_history_tbl_view",
+                "caption": "TODO Today&History table View"
             },
             {   "caption": "-" },
             {
