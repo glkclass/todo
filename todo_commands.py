@@ -23,14 +23,14 @@ def plugin_loaded():
                 sys.path.append(item)
 
     global todo
-    from Todo import Todo
-    todo = Todo.Todo(path2do_pom=settings.get('path2do_pom'))
+    from Todo_text import Todo_text
+    todo = Todo_text(path2do_pom=settings.get('path2do_pom'))
 
 
 class TodoMenuCmdCommand(sublime_plugin.WindowCommand):
     def run(self, cmd, task):
         todo.todo_menu_cmd(cmd, task)
-        sublime.status_message("Update task %s: %s" % (task, cmd))
+        sublime.status_message("Update task: %s -> %s" % (task, cmd))
 
 
 class TodoTblNewCommand(sublime_plugin.WindowCommand):

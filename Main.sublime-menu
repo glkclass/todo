@@ -100,12 +100,12 @@
         "caption": "Tasks",
         "children": [
           {
-            "caption": "fix for tomorrow bug",
+            "caption": "fff",
             "children": [
               {
                 "args": {
                   "cmd": "short_break",
-                  "task": "fix for tomorrow bug"
+                  "task": "fff"
                 },
                 "caption": "Short break",
                 "command": "todo_menu_cmd",
@@ -114,7 +114,7 @@
               {
                 "args": {
                   "cmd": "long_break",
-                  "task": "fix for tomorrow bug"
+                  "task": "fff"
                 },
                 "caption": "Long break",
                 "command": "todo_menu_cmd",
@@ -123,167 +123,7 @@
               {
                 "args": {
                   "cmd": "ok",
-                  "task": "fix for tomorrow bug"
-                },
-                "caption": "Ok",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_ok"
-              }
-            ]
-          },
-          {
-            "caption": "supercom folder discuss / plan",
-            "children": [
-              {
-                "args": {
-                  "cmd": "short_break",
-                  "task": "supercom folder discuss / plan"
-                },
-                "caption": "Short break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_short_break"
-              },
-              {
-                "args": {
-                  "cmd": "long_break",
-                  "task": "supercom folder discuss / plan"
-                },
-                "caption": "Long break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_long_break"
-              },
-              {
-                "args": {
-                  "cmd": "ok",
-                  "task": "supercom folder discuss / plan"
-                },
-                "caption": "Ok",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_ok"
-              }
-            ]
-          },
-          {
-            "caption": "dist learning runs",
-            "children": [
-              {
-                "args": {
-                  "cmd": "short_break",
-                  "task": "dist learning runs"
-                },
-                "caption": "Short break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_short_break"
-              },
-              {
-                "args": {
-                  "cmd": "long_break",
-                  "task": "dist learning runs"
-                },
-                "caption": "Long break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_long_break"
-              },
-              {
-                "args": {
-                  "cmd": "ok",
-                  "task": "dist learning runs"
-                },
-                "caption": "Ok",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_ok"
-              }
-            ]
-          },
-          {
-            "caption": "todo: add st3 menu support: task elaboration",
-            "children": [
-              {
-                "args": {
-                  "cmd": "short_break",
-                  "task": "todo: add st3 menu support: task elaboration"
-                },
-                "caption": "Short break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_short_break"
-              },
-              {
-                "args": {
-                  "cmd": "long_break",
-                  "task": "todo: add st3 menu support: task elaboration"
-                },
-                "caption": "Long break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_long_break"
-              },
-              {
-                "args": {
-                  "cmd": "ok",
-                  "task": "todo: add st3 menu support: task elaboration"
-                },
-                "caption": "Ok",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_ok"
-              }
-            ]
-          },
-          {
-            "caption": "generate main.sublime-menu",
-            "children": [
-              {
-                "args": {
-                  "cmd": "short_break",
-                  "task": "generate main.sublime-menu"
-                },
-                "caption": "Short break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_short_break"
-              },
-              {
-                "args": {
-                  "cmd": "long_break",
-                  "task": "generate main.sublime-menu"
-                },
-                "caption": "Long break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_long_break"
-              },
-              {
-                "args": {
-                  "cmd": "ok",
-                  "task": "generate main.sublime-menu"
-                },
-                "caption": "Ok",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_ok"
-              }
-            ]
-          },
-          {
-            "caption": "add todo menu methods: inc",
-            "children": [
-              {
-                "args": {
-                  "cmd": "short_break",
-                  "task": "add todo menu methods: inc"
-                },
-                "caption": "Short break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_short_break"
-              },
-              {
-                "args": {
-                  "cmd": "long_break",
-                  "task": "add todo menu methods: inc"
-                },
-                "caption": "Long break",
-                "command": "todo_menu_cmd",
-                "id": "todo_menu_long_break"
-              },
-              {
-                "args": {
-                  "cmd": "ok",
-                  "task": "add todo menu methods: inc"
+                  "task": "fff"
                 },
                 "caption": "Ok",
                 "command": "todo_menu_cmd",

@@ -1,63 +1,14 @@
 import re
 from Scrpt import Scrpt
+from Todo_base import Todo_base
+
 import tinydb as db
 import operator
 import os
 import datetime
 
-class Todo(Scrpt):
-    """Support TODO-table usage"""
-    param = {
-                'todo.pom':                 'todo.pom',
-                'todo.db':                  'todo.json',
-                'todo.cache':               'todo_cache.json',
-                'todo.sublime-menu':        'Main.sublime-menu',
-                'todo_base.sublime-menu':   'Main_base.sublime-menu',
-                'cache_size':               8,
-                'todo_history':             {'re': '2017/\d\d/\d\d', 'max_length': 0}
-            }
-
-    tbl = {
-            'todo_': {
-                        'doubleline': 80 * '=',
-                        'singleline': 80 * '-',
-                        'pointline': 80 * '.',
-                        'timestamp_header': '',
-                        'today_header': 'TODO Today:',
-                        'today_tbl_header': '|=EST=|=STA=|=POM=|=TASK=',
-                        'today_ph_line': '|' + 3 * ('     |') + ' ',
-                        'today_tbl_line': '|%s|%s|%s| %s',
-
-                        'sometime_header': 'TODO Sometime:',
-                        'sometime_tbl_header': '=DATE=        =TASK=',
-                        'sometime_update_line': '/\n+\n-',
-                        'sometime_tbl_line': '%s    %s',
-                        'sometime_tomorrow_tag': 'todo tomorrow: ',
-
-                        'history_tbl_header': 'TODO History:'
-                    },
-
-            're': {
-                    'doubleline': r'=====+',
-                    'singleline': r'-----+',
-
-                    'timestamp_header': r'(\d{4}/\d{2}/\d{2}), \w{3}, (\d{2}\:\d{2})',
-
-                    'today_header': r'TODO Today:',
-                    'today_tbl_header': r'\|-EST-\|-STA-\|-POM-\|-TASK-',
-                    'today_tbl_line': r'^[\| ]*(.*)\|+(.*)\|+(.*)\|+(.*)',
-
-                    'sometime_header': r'TODO Sometime:',
-                    'sometime_tbl_header': r'-DATE-        -TASK-',
-                    'sometime_update_line': r'^ *([\+\-\/]) +(.*)$',
-
-                    'history_tbl_header': r'TODO History:'
-                  }
-        }
-
-
-
-
+class Todo_text(Todo_base):
+    """Support TODO-table usage: text version"""
 
     def __init__(self, path2log=None, user_settings={}, path2do_pom=None):
         """
@@ -69,23 +20,7 @@ class Todo(Scrpt):
 
         Call superclass constructor, prepare parameters, open db .
         """
-        Scrpt.__init__(self, path2log, user_settings)
-        self.holidays =  {
-                        'Holidays': ['2017/01/01', '2017/01/07']
-                    }
-
-        self.todo_menu = os.path.join(path2do_pom, self.param['todo.sublime-menu']) if path2do_pom else self.param['todo.sublime-menu']
-        self.todo_menu_base = os.path.join(path2do_pom, self.param['todo_base.sublime-menu']) if path2do_pom else self.param['todo_base.sublime-menu']
-        self.todo_pom = os.path.join(path2do_pom, self.param['todo.pom']) if path2do_pom else self.param['todo.pom']
-        self.todo_db = os.path.join(path2do_pom, self.param['todo.db']) if path2do_pom else self.param['todo.db']
-        self.todo_cache = os.path.join(path2do_pom, self.param['todo.cache']) if path2do_pom else self.param['todo.cache']
-
-        self.todo_db = db.TinyDB(self.todo_db, indent=2)
-        self.todo_db_history = self.todo_db.table('todo_history')
-        self.todo_db_sometime = self.todo_db.table('todo_sometime')
-        self.todo_db_tomorrow = self.todo_db.table('todo_tomorrow')
-        self.todo_db_holes = self.todo_db.table('todo_holes')
-        self.todo_history_holes = self.todo_db_holes.get(db.Query()['year'] == 2017)
+        Todo_base.__init__(self, path2log, user_settings, path2do_pom)
 
     def _get_timestamp(self):
         """Get current date/time stamp. Return dict with date/time values + date&time formatted strings."""
@@ -271,7 +206,7 @@ class Todo(Scrpt):
         end = len(todo_pom_buffer)
         for i in (start, end):
             line = todo_pom_buffer[i]
-            if re.search(self.tbl['re']['timestamp_header'], line):
+            if re.search(self.tbl['re']['timestamp']['header'], line):
                 todo_buffer['timestamp'].append(line)
                 break
 
@@ -279,7 +214,7 @@ class Todo(Scrpt):
         start = i + 1
         for i in range(start, end):
             line = todo_pom_buffer[i]
-            todo_today_header = re.search(self.tbl['re']['today_header'], line)
+            todo_today_header = re.search(self.tbl['re']['today']['header'], line)
             if todo_today_header is None:
                 if todo_buffer_act is not None:
                     todo_buffer_act.append(line)
@@ -294,8 +229,8 @@ class Todo(Scrpt):
             start = i + 1
             for i in range(start, end):
                 line = todo_pom_buffer[i]
-                todo_sometime_header = re.search(self.tbl['re']['sometime_header'], line)
-                todo_history_header = re.search(self.tbl['re']['history_tbl_header'], line)
+                todo_sometime_header = re.search(self.tbl['re']['sometime']['header'], line)
+                todo_history_header = re.search(self.tbl['re']['history']['header'], line)
 
                 if todo_sometime_header is None and todo_history_header is None:
                     if todo_buffer_act is not None:
@@ -347,7 +282,7 @@ class Todo(Scrpt):
 
         todo_info = {}
         for line in todo_buffer['timestamp']:
-            timestamp_header = re.search(self.tbl['re']['timestamp_header'], line)  # find timestamp header
+            timestamp_header = re.search(self.tbl['re']['timestamp']['header'], line)  # find timestamp header
             if timestamp_header:
                 todo_info['date'] = timestamp_header.group(1)
                 todo_info['time'] = timestamp_header.group(2)
@@ -355,7 +290,7 @@ class Todo(Scrpt):
 
         foo = []
         for line in todo_buffer['today']:
-            today_tbl_line = re.search(self.tbl['re']['today_tbl_line'], line)
+            today_tbl_line = re.search(self.tbl['re']['today']['tbl_line'], line)
             if today_tbl_line:
                 foo.append({'est': today_tbl_line.group(1).strip(), 'sta': today_tbl_line.group(2).strip(), 'pom': today_tbl_line.group(3).strip(), 'task': today_tbl_line.group(4).strip()})
 
@@ -363,7 +298,7 @@ class Todo(Scrpt):
 
         todo_info['sometime'] = {'+': [], '-': [], '/': []}
         for line in todo_buffer['sometime']:
-            sometime_tbl_line = re.search(self.tbl['re']['sometime_update_line'], line)
+            sometime_tbl_line = re.search(self.tbl['re']['sometime']['add_task_line'], line)
             if sometime_tbl_line:
                 todo_info['sometime'][sometime_tbl_line.group(1)].append(sometime_tbl_line.group(2).strip())
 
@@ -534,7 +469,7 @@ class Todo(Scrpt):
         return
 
 if __name__ == "__main__":
-    Todo().run()
+    Todo_text().run()
 
 
 
