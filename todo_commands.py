@@ -23,8 +23,8 @@ def plugin_loaded():
                 sys.path.append(item)
 
     global todo
-    from Todo_text import Todo_text
-    todo = Todo_text(path2do_pom=settings.get('path2do_pom'))
+    from Todo import Todo
+    todo = Todo.Todo(path2do_pom=settings.get('path2do_pom'))
 
 
 class TodoMenuCmdCommand(sublime_plugin.WindowCommand):
@@ -46,20 +46,30 @@ class TodoTblViewCommand(sublime_plugin.WindowCommand):
         sublime.status_message("TODO table view")
 
 
-class TodoTblSaveCommand(sublime_plugin.WindowCommand):
+class TodoDbUnlinkCommand(sublime_plugin.WindowCommand):
     def run(self):
-        todo.todo_tbl_save()
-        sublime.status_message("TODO table was saved")
+        todo.todo_db_access('unlink')
+        sublime.status_message("TODO DB unlinked")
+
+
+class TodoDbLinkCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        todo.todo_db_access('link')
+        sublime.status_message("TODO DB linked")
 
 
 class TodoTblOpenCommand(sublime_plugin.WindowCommand):
-    def run(self, file):
+    def run(self):
         sublime.active_window().open_file(todo.todo_pom)
 
 
-class TodoTblTestCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        return
-        # print(settings.get("path2do_pom"))
-        # print(sys.version)
-        # print(sys.path)
+class TodoInfoSaveCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        todo.todo_info_save()
+        sublime.status_message("TODO info saved")
+
+
+class TodoInfoUpdateCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        todo.todo_info_update()
+        sublime.status_message("TODO info updated")

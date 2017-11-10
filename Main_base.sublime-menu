@@ -3,16 +3,16 @@
     "caption": "Todo",
     "children": [
       {
-        "caption": "TODO table New",
+        "caption": "TODO table   New",
         "children": [
           {
+            "caption": "Today&Sometime&History",
+            "command": "todo_tbl_new",
+            "id": "todo_today_sometime_history_tbl_new",
             "args": {
               "show_todo_history": "True",
               "show_todo_sometime": "True"
-            },
-            "caption": "Today&Sometime&History",
-            "command": "todo_tbl_new",
-            "id": "todo_today_sometime_history_tbl_new"
+            }            
           },
           {
             "caption": "Today",
@@ -20,20 +20,20 @@
             "id": "todo_today_tbl_new"
           },
           {
-            "args": {
-              "show_todo_sometime": "True"
-            },
             "caption": "Today&Sometime",
             "command": "todo_tbl_new",
-            "id": "todo_today_sometime_tbl_new"
+            "id": "todo_today_sometime_tbl_new",
+            "args": {
+              "show_todo_sometime": "True"
+            }
           },
           {
-            "args": {
-              "show_todo_history": "True"
-            },
             "caption": "Today&History",
             "command": "todo_tbl_new",
-            "id": "todo_today_sometime_tbl_new"
+            "id": "todo_today_sometime_tbl_new",
+            "args": {
+              "show_todo_history": "True"
+            }
           }
         ]
       },
@@ -41,16 +41,16 @@
         "caption": "-"
       },
       {
-        "caption": "TODO table View",
+        "caption": "TODO table   View",
         "children": [
           {
+            "caption": "Today&Sometime&History",
+            "command": "todo_tbl_view",
+            "id": "todo_today_sometime_history_tbl_view",
             "args": {
               "show_todo_history": "True",
               "show_todo_sometime": "True"
-            },
-            "caption": "Today&Sometime&History",
-            "command": "todo_tbl_view",
-            "id": "todo_today_sometime_history_tbl_view"
+            }
           },
           {
             "caption": "Today",
@@ -58,40 +58,58 @@
             "id": "todo_today_tbl_view"
           },
           {
-            "args": {
-              "show_todo_sometime": "True"
-            },
             "caption": "Today&Sometime",
             "command": "todo_tbl_view",
-            "id": "todo_today_sometime_tbl_view"
+            "id": "todo_today_sometime_tbl_view",
+            "args": {
+              "show_todo_sometime": "True"
+            }
           },
           {
-            "args": {
-              "show_todo_history": "True"
-            },
             "caption": "Today&History",
             "command": "todo_tbl_view",
-            "id": "todo_today_history_tbl_view"
+            "id": "todo_today_history_tbl_view",
+            "args": {
+              "show_todo_history": "True"
+            }
           }
-        ],
-        "command": "todo_tbl_view",
-        "id": "todo_today_tbl_view"
+        ]
       },
       {
         "caption": "-"
       },
       {
-        "args": {
-          "file": "$packages"
-        },
-        "caption": "TODO table Open",
+        "caption": "TODO table   Utils",
+        "children": [
+          {
+            "caption": "DB unlink",
+            "command": "todo_db_unlink",
+            "id": "todo_db_unlink"
+          },
+          {
+            "caption": "DB link",
+            "command": "todo_db_link",
+            "id": "todo_db_link"
+          }
+        ]
+      },
+      {
+        "caption": "-"
+      },
+      {
+        "caption": "TODO table   Open",
         "command": "todo_tbl_open",
         "id": "todo_tbl_open"
       },
       {
-        "caption": "TODO table Save",
-        "command": "todo_tbl_save",
-        "id": "todo_tbl_save"
+        "caption": "TODO info     Save",
+        "command": "todo_info_save",
+        "id": "todo_info_save"
+      },
+      {
+        "caption": "TODO info     Update",
+        "command": "todo_info_update",
+        "id": "todo_info_update"
       },
       {
         "caption": "-"

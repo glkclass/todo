@@ -8,7 +8,7 @@ from Scrpt import Scrpt
 
 
 
-class Todo_window(Scrpt):
+class Todo(Scrpt):
     """Support TODO-table usage: window version"""
     param = {
                 'todo.pom':                 'todo.pom',
@@ -58,7 +58,7 @@ class Todo_window(Scrpt):
                     'today': {
                                 'header': r'TODO Today:',
                                 'tbl_header': r'\|=EST=\|=STA=\|=POM=\|=TASK=',
-                                'tbl_task_line': r'^ *\|+ *(\d*) *\|+ *([OoKk]*) *\|+ *(\d*) *\|+ *([^ ]+)',
+                                'tbl_task_line': r'^ *\|+ *(\d*) *\|+ *([OoKk]*) *\|+ *(\d*) *\|+ *(.+)',
                                 'add_task_line': r'^ *(\d*) *\/ +([^ ]+)$'
                             },
 
@@ -88,20 +88,31 @@ class Todo_window(Scrpt):
                         'Holidays': ['2017/01/01', '2017/01/07']
                     }
 
-        self.todo_pom = os.path.join(path2do_pom, 'todo_.pom') if path2do_pom else 'todo_.pom'
-        self.todo_db = os.path.join(path2do_pom, self.param['todo.db']) if path2do_pom else self.param['todo.db']
-        self.todo_cache = os.path.join(path2do_pom, self.param['todo.cache']) if path2do_pom else self.param['todo.cache']
+        self.todo_pom = os.path.join(path2do_pom, 'todo.pom') if path2do_pom else 'todo.pom'
+        self.todo_db_fn = os.path.join(path2do_pom, self.param['todo.db']) if path2do_pom else self.param['todo.db']
+        # self.todo_cache = os.path.join(path2do_pom, self.param['todo.cache']) if path2do_pom else self.param['todo.cache']
         self.todo_menu = os.path.join(path2do_pom, self.param['todo.sublime-menu']) if path2do_pom else self.param['todo.sublime-menu']
         self.todo_menu_base = os.path.join(path2do_pom, self.param['todo_base.sublime-menu']) if path2do_pom else self.param['todo_base.sublime-menu']
-
-        self.todo_db = db.TinyDB(self.todo_db, indent=2)
-        self.todo_db_history = self.todo_db.table('todo_history')
-        self.todo_db_sometime = self.todo_db.table('todo_sometime')
-        self.todo_db_tomorrow = self.todo_db.table('todo_tomorrow')
-        self.todo_db_holes = self.todo_db.table('todo_holes')
-        self.todo_history_holes = self.todo_db_holes.get(db.Query()['year'] == 2017)
-
+        self.todo_db_access('link')
 # ---------------------------------------------------------------------------------------------------------------------
+
+    def todo_db_access(self, cmd):
+        if 'link' == cmd:
+            self.todo_db = db.TinyDB(self.todo_db_fn, indent=2)
+            self.todo_db_history = self.todo_db.table('todo_history')
+            self.todo_db_sometime = self.todo_db.table('todo_sometime')
+            self.todo_db_tomorrow = self.todo_db.table('todo_tomorrow')
+            self.todo_db_holes = self.todo_db.table('todo_holes')
+            self.todo_history_holes = self.todo_db_holes.get(db.Query()['year'] == 2017)
+        elif 'unlink' == cmd:
+            self.todo_db = None
+            self.todo_db_history = None
+            self.todo_db_sometime = None
+            self.todo_db_tomorrow = None
+            self.todo_db_holes = None
+            self.todo_history_holes = None
+        else:
+            self.error('Wrong cmd: %s' % cmd)
 
     def _get_timestamp(self):
         """Get current date/time stamp. Return dict with date/time values + date&time formatted strings."""
@@ -309,7 +320,8 @@ class Todo_window(Scrpt):
                     tbl_buffer.append(line)
                     break
         else:
-            self.error('Table buffer start/stop header wasn\'t found: %s or %s' % (header['start'], header['stop']))
+            if marker is header['stop']:
+                self.error('%s buffer stop header wasn\'t found: %s' % (header['start'], header['stop']))
         return i, tbl_buffer
 
     def _extract_todo_tbl_buffers(self, todo_pom_buffer, extract_history=False):
@@ -323,7 +335,7 @@ class Todo_window(Scrpt):
         """
 
         # self.info(todo_pom_buffer)
-        todo_buffers = {'timestamp': None, 'today': None, 'sometime': None, 'history': None}
+        todo_buffers = {'timestamp': [], 'today': [], 'sometime': [], 'history': []}
         i, todo_buffers['timestamp'] = self._extract_tbl_buffer(todo_pom_buffer, {'start': self.tbl['re']['timestamp']['header'], 'stop': ''})
         i, todo_buffers['today'] = self._extract_tbl_buffer(todo_pom_buffer[i:], {'start': self.tbl['re']['today']['header'], 'stop': self.tbl['re']['singleline']})
         _, todo_buffers['sometime'] = self._extract_tbl_buffer(todo_pom_buffer[i:], {'start': self.tbl['re']['sometime']['header'], 'stop': self.tbl['re']['singleline']})
@@ -355,7 +367,7 @@ class Todo_window(Scrpt):
             if line == self.tbl['todo']['today']['tbl_header']:
                 continue
             foo = re.search(self.tbl['re']['today']['tbl_task_line'], line)
-            if foo:
+            if foo and '' != foo.group(4).strip():
                 est = foo.group(1).strip()
                 est = 0 if '' == est else int(est)
                 sta = re.search(r"[Oo][Kk]", foo.group(2).strip())
@@ -366,7 +378,7 @@ class Todo_window(Scrpt):
                 todo_today.append({'est': est, 'sta': sta, 'pom': pom, 'task': task})
             else:
                 foo = re.search(self.tbl['re']['today']['add_task_line'], line)
-                if foo:
+                if foo and '' != foo.group(2).strip():
                     est = foo.group(1).strip()
                     est = int(est) if est != '' else 0
                     task = foo.group(2).strip()
@@ -460,20 +472,44 @@ class Todo_window(Scrpt):
         self.util.file.save(todo_menu_base, self.todo_menu, 'json')
         return
 
-    def _update_todo_info(self):
+    def _task_update(self, cmd, task, todo_info):
+        for item in todo_info['today']:
+            if task == item['task']:
+                if 'short_break' == cmd:
+                    item['pom'] += 1
+                elif 'ok' == cmd:
+                    item['sta'] = 1
+                else:
+                    self.error('Wrong command detected: %s !!!' % cmd)
+                break
+        else:
+            self.error('Wrong task detected: %s !!!' % task)
+
+    def _short_break_cmd(self, task):
         todo_info = self._extract_todo_info(True)
-        self._add_tasks2menu(item['task'] for item in todo_info['today'])
-        self._todo_sometime_save(todo_info)
+        self._task_update('short_break', task, todo_info)
         todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
-        todo_sometime_tbl = self._generate_todo_sometime() + [''] if todo_info['buffers']['sometime'] else []
-        todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
+        todo_sometime_tbl = todo_info['buffers']['sometime'] + [''] if todo_info['buffers']['sometime'] else []
+        todo_history_tbl = todo_info['buffers']['history'] + [''] if todo_info['buffers']['history'] else []
         self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
-        return
+
+    def _long_break_cmd(self, task):
+        self._short_break_cmd(task)
+        self.todo_info_save()
+
+    def _ok_cmd(self, task):
+        todo_info = self._extract_todo_info(True)
+        self._task_update('ok', task, todo_info)
+        todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
+        todo_sometime_tbl = todo_info['buffers']['sometime'] + [''] if todo_info['buffers']['sometime'] else []
+        todo_history_tbl = todo_info['buffers']['history'] + [''] if todo_info['buffers']['history'] else []
+        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
 
 # API methods
+    cmd_handler = {'short_break': _short_break_cmd, 'long_break': _long_break_cmd, 'ok': _ok_cmd}
+
     def todo_menu_cmd(self, cmd, task):
-        self.info(cmd)
-        self.info(task)
+        self.cmd_handler[cmd](self, task)
         return
 
     def todo_tbl_new(self, show_todo_sometime=False, show_todo_history=False):
@@ -494,16 +530,6 @@ class Todo_window(Scrpt):
         todo_history_tbl = self._generate_todo_history() if show_todo_history else []
         self.util.file.save([self._generate_timestamp_header()['day_time'], ''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
 
-    def todo_tbl_save(self):
-        """Extract todo info from todo.pom and save it to db. Regenerate todo.pom with updated history"""
-        todo_info = self._extract_todo_info(True)
-        self._todo_today_save(todo_info)
-        self._todo_sometime_save(todo_info)
-        todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
-        todo_sometime_tbl = self._generate_todo_sometime() + [''] if todo_info['buffers']['sometime'] else []
-        todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
-        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
-
     def todo_tbl_view(self, show_todo_sometime=False, show_todo_history=False):
         """
         Regenerate todo.pom with given settings
@@ -517,18 +543,40 @@ class Todo_window(Scrpt):
         todo_info = self._extract_todo_info(True)
         todo_sometime_tbl = self._generate_todo_sometime() + [''] if show_todo_sometime else []
         todo_history_tbl = self._generate_todo_history() if show_todo_history else []
-        self.util.file.save(todo_info['tbl_buffer']['timestamp'] + [''] + todo_info['tbl_buffer']['today'] + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_info['buffers']['today'] + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+
+    def todo_info_save(self):
+        """Extract todo info from todo.pom and save it to db. Regenerate todo.pom with updated history"""
+        todo_info = self._extract_todo_info(True)
+        self._todo_today_save(todo_info)
+        self._todo_sometime_save(todo_info)
+        todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
+        todo_sometime_tbl = self._generate_todo_sometime() + [''] if todo_info['buffers']['sometime'] else []
+        todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
+        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+
+    def todo_info_update(self):
+        todo_info = self._extract_todo_info(True)
+        self._add_tasks2menu(item['task'] for item in todo_info['today'])
+        self._todo_sometime_save(todo_info)
+        todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
+        todo_sometime_tbl = self._generate_todo_sometime() + [''] if todo_info['buffers']['sometime'] else []
+        todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
+        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+        return
 
     def main(self, **kwargs):
-        self.todo_tbl_new(True, True)
-        # self.todo_tbl_view(True, True)
+        # self.todo_tbl_new(True, True)
+        self.todo_tbl_view(True, True)
         # self.todo_tbl_save()
         # self.todo_db_holes.purge()
         # self.todo_db_holes.insert({'year': 2017, 'Holidays': ['2017/10/14'], 'Vacation': ['2017/10/10'], 'Sick': ['2017/10/03']})
         # self._extract_todo_info(True)
-        # self._update_todo_info()
+        # self._todo_info_update()
+        # self.todo_menu_cmd('short_break', 'xxx')
+
         return
 
 
 if __name__ == "__main__":
-    Todo_window().run()
+    Todo().run()
