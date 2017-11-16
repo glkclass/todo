@@ -3,6 +3,27 @@
     "caption": "Todo",
     "children": [
       {
+        "caption": "-"
+      },
+      {
+        "caption": "TODO info     Update",
+        "command": "todo_info_update",
+        "id": "todo_info_update"
+      },
+      {
+        "caption": "TODO info     Save",
+        "command": "todo_info_save",
+        "id": "todo_info_save"
+      },
+      {
+        "caption": "TODO table   Open",
+        "command": "todo_tbl_open",
+        "id": "todo_tbl_open"
+      },
+      {
+        "caption": "-"
+      },
+      {
         "caption": "TODO table   New",
         "children": [
           {
@@ -92,24 +113,6 @@
             "id": "todo_db_link"
           }
         ]
-      },
-      {
-        "caption": "-"
-      },
-      {
-        "caption": "TODO table   Open",
-        "command": "todo_tbl_open",
-        "id": "todo_tbl_open"
-      },
-      {
-        "caption": "TODO info     Save",
-        "command": "todo_info_save",
-        "id": "todo_info_save"
-      },
-      {
-        "caption": "TODO info     Update",
-        "command": "todo_info_update",
-        "id": "todo_info_update"
       },
       {
         "caption": "-"

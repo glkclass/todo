@@ -5,9 +5,9 @@ file_extensions:
 scope: text.todo
 
 variables:
-  v_singleline: '-----+'
-  v_pointline: '\.\.\.\.\.+'
-  v_doubleline: '=====+'
+  v_singleline: '----------+'
+  v_pointline: '\.\.\.\.\.\.\.\.\.\.+'
+  v_doubleline: '==========+'
 
   v_todo_today_header: 'TODO Today\:'
   v_todo_today_tbl_header: '\|=EST=\|=STA=\|=POM=\|=TASK='

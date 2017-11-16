@@ -49,9 +49,9 @@ class Todo(Scrpt):
                     },
 
             're': {
-                    'doubleline': r'=====+',
-                    'singleline': r'-----+',
-                    'pointline': r'\.\.\.\.\.+',
+                    'doubleline': r'==========+',
+                    'singleline': r'----------+',
+                    'pointline': r'\.\.\.\.\.\.\.\.\.\.+',
 
                     'timestamp': {'header': r'(\d{4}/\d{2}/\d{2}), \w{3}, (\d{2}\:\d{2})'},
 
@@ -59,7 +59,7 @@ class Todo(Scrpt):
                                 'header': r'TODO Today:',
                                 'tbl_header': r'\|=EST=\|=STA=\|=POM=\|=TASK=',
                                 'tbl_task_line': r'^ *\|+ *(\d*) *\|+ *([OoKk]*) *\|+ *(\d*) *\|+ *(.+)',
-                                'add_task_line': r'^ *(\d*) *\/ +([^ ]+)$'
+                                'add_task_line': r'^ *(\d*) *\/ +(.+)$'
                             },
 
                     'sometime': {                    
@@ -166,7 +166,16 @@ class Todo(Scrpt):
 
         todo_today_buffer.append(self.tbl['todo']['today']['tbl_header'])
         if tasks4tbl:
+            total = {'est': 0, 'pom': 0}
+
+            # sum allready saved pomodoros
+            if (self.todo_db_history.contains(db.Query().date == self._get_timestamp()['date'])):
+                db_item_list = self.todo_db_history.get(db.Query().date == self._get_timestamp()['date'])['todo_item']
+                total['pom'] = sum([item['pom'] for item in db_item_list])
+
             for item in tasks4tbl:
+                total['est'] += item['est']
+                total['pom'] += item['pom']
                 est = str(item['est']) if 0 != item['est'] else ''
                 pom = str(item['pom']) if 0 != item['pom'] else ''
                 todo_today_tbl_line = ( self.util.allign_text(est, 5,),
@@ -174,8 +183,15 @@ class Todo(Scrpt):
                                         self.util.allign_text(pom, 5),
                                         item['task'])
                 todo_today_buffer.append(self.tbl['todo']['today']['tbl_task_line'] % todo_today_tbl_line)
+
+            todo_today_tbl_line = ( self.util.allign_text(str(total['est']), 5, alligner='-'),
+                                    self.util.allign_text('', 5, alligner='-'),
+                                    self.util.allign_text(str(total['pom']), 5, alligner='-'),
+                                    '= Total')
+            todo_today_buffer.append(self.tbl['todo']['today']['tbl_task_line'] % todo_today_tbl_line)
+
         else:
-            todo_today_buffer.append(self.tbl['todo']['today']['tbl_ph_line'])        
+            todo_today_buffer.append(self.tbl['todo']['today']['tbl_ph_line'])
         todo_today_buffer.append(self.tbl['todo']['singleline'])
         return todo_today_buffer
 
@@ -267,18 +283,18 @@ class Todo(Scrpt):
             todo_history_buffer.append('    %s' % self.tbl['todo']['today']['tbl_header'])
             total = {'est': 0, 'pom': 0}
             for item in day['todo_item']:
-                today_tbl_line = (  self.util.allign_text(str(item['est']), 5,),
-                                    self.util.allign_text({0: '', 1: 'Ok'}[item['sta']], 5),
-                                    self.util.allign_text(str(item['pom']), 5),
-                                    item['task'])
-                todo_history_buffer.append('    ' + self.tbl['todo']['today']['tbl_task_line'] % today_tbl_line)
+                todo_today_tbl_line = ( self.util.allign_text(str(item['est']), 5,),
+                                        self.util.allign_text({0: '', 1: 'Ok'}[item['sta']], 5),
+                                        self.util.allign_text(str(item['pom']), 5),
+                                        item['task'])
+                todo_history_buffer.append('    ' + self.tbl['todo']['today']['tbl_task_line'] % todo_today_tbl_line)
                 total['est'] += item['est']
                 total['pom'] += item['pom']
-            today_tbl_line = (  self.util.allign_text(str(total['est']), 5, alligner='-'),
-                                self.util.allign_text('', 5, alligner='-'),
-                                self.util.allign_text(str(total['pom']), 5, alligner='-'),
-                                '=Total')
-            todo_history_buffer.append('    ' + self.tbl['todo']['today']['tbl_task_line'] % today_tbl_line)
+            todo_today_tbl_line = ( self.util.allign_text(str(total['est']), 5, alligner='-'),
+                                    self.util.allign_text('', 5, alligner='-'),
+                                    self.util.allign_text(str(total['pom']), 5, alligner='-'),
+                                    '= Total')
+            todo_history_buffer.append('    ' + self.tbl['todo']['today']['tbl_task_line'] % todo_today_tbl_line)
 
             week_pre = week_cur
             day_pre = day['date']
@@ -342,8 +358,8 @@ class Todo(Scrpt):
         if extract_history:
             _, todo_buffers['history'] = self._extract_tbl_buffer(todo_pom_buffer[i:], {'start': self.tbl['re']['history']['header'], 'stop': self.tbl['re']['pointline']})
         # self.info(todo_buffers['timestamp'])
-        # self.info(todo_buffers['today'])
-        # self.info(todo_buffers['sometime'])
+        self.info(todo_buffers['today'])
+        self.info(todo_buffers['sometime'])
         # self.info(todo_buffers['history'])
         return todo_buffers
 
@@ -417,7 +433,7 @@ class Todo(Scrpt):
             self.todo_db_history.update({'todo_item': db_item_list, 'time_evening': self._get_timestamp()['time']}, db.Query().date == todo_info['date'])
         else:
             todo_item_completed = [item for item in todo_info['today'] if item['pom'] != 0]
-            bar = {'date': todo_info['date'], 'time_morning': todo_info['time'], 'time_evening': self._generate_timestamp()['time'], 'todo_item': todo_item_completed}
+            bar = {'date': todo_info['date'], 'time_morning': todo_info['time'], 'time_evening': self._get_timestamp()['time'], 'todo_item': todo_item_completed}
             self.todo_db_history.insert(bar)
 
         # clear just saved 'pom' counters
@@ -433,7 +449,7 @@ class Todo(Scrpt):
 
         for item in todo_info['sometime']['-']:
             self.todo_db_sometime.remove(db.Query().task == item)
-            self.todo_db_tomorrow.remove(db.Query().task == item.replace(self.tbl['todo']['sometime_tomorrow_tag'], ''))
+            self.todo_db_tomorrow.remove(db.Query().task == item.replace(self.tbl['todo']['sometime']['tomorrow_tag'], ''))
 
         for item in todo_info['sometime']['/']:
             if not self.todo_db_tomorrow.contains(db.Query().task == item):
@@ -468,7 +484,7 @@ class Todo(Scrpt):
                     }
             children.append(bar)
         tasks_menu = {"caption": "Tasks", 'children': children}
-        todo_menu_base[0]['children'].append(tasks_menu)
+        todo_menu_base[0]['children'].insert(0, tasks_menu)
         self.util.file.save(todo_menu_base, self.todo_menu, 'json')
         return
 
@@ -567,13 +583,14 @@ class Todo(Scrpt):
 
     def main(self, **kwargs):
         # self.todo_tbl_new(True, True)
-        self.todo_tbl_view(True, True)
+        # self.todo_tbl_view(True, True)
         # self.todo_tbl_save()
         # self.todo_db_holes.purge()
         # self.todo_db_holes.insert({'year': 2017, 'Holidays': ['2017/10/14'], 'Vacation': ['2017/10/10'], 'Sick': ['2017/10/03']})
-        # self._extract_todo_info(True)
-        # self._todo_info_update()
+        self._extract_todo_info(True)
+        # self.todo_info_update()
         # self.todo_menu_cmd('short_break', 'xxx')
+        # self._extract_todo_tbl_buffers()
 
         return
 
