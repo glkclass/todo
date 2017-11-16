@@ -13,7 +13,6 @@ class Todo(Scrpt):
     param = {
                 'todo.pom':                 'todo.pom',
                 'todo.db':                  'todo.json',
-                'todo.cache':               'todo_cache.json',
                 'todo.sublime-menu':        'Main.sublime-menu',
                 'todo_base.sublime-menu':   'Main_base.sublime-menu',
                 'cache_size':               8,
@@ -73,7 +72,9 @@ class Todo(Scrpt):
                   }
         }
 
-    def __init__(self, path2log=None, user_settings={}, path2do_pom=None):
+# ---------------------------------------------------------------------------------------------------------------------
+
+    def __init__(self, path2log=None, scrpt_settings={}, todo_settings={}):
         """
         Todo constructor.
 
@@ -83,18 +84,17 @@ class Todo(Scrpt):
 
         Call superclass constructor, prepare parameters, open db .
         """
-        Scrpt.__init__(self, path2log, user_settings)
-        self.holidays =  {
-                        'Holidays': ['2017/01/01', '2017/01/07']
-                    }
+        Scrpt.__init__(self, path2log, scrpt_settings)
 
-        self.todo_pom = os.path.join(path2do_pom, 'todo.pom') if path2do_pom else 'todo.pom'
-        self.todo_db_fn = os.path.join(path2do_pom, self.param['todo.db']) if path2do_pom else self.param['todo.db']
-        # self.todo_cache = os.path.join(path2do_pom, self.param['todo.cache']) if path2do_pom else self.param['todo.cache']
-        self.todo_menu = os.path.join(path2do_pom, self.param['todo.sublime-menu']) if path2do_pom else self.param['todo.sublime-menu']
-        self.todo_menu_base = os.path.join(path2do_pom, self.param['todo_base.sublime-menu']) if path2do_pom else self.param['todo_base.sublime-menu']
+        todo_settings['path']['plugin'] = '' if 'plugin' not in todo_settings['path'].keys() else todo_settings['path']['plugin']
+        todo_settings['path']['pom'] = todo_settings['path']['plugin'] if 'pom' not in todo_settings['path'].keys() or todo_settings['path']['pom'] is None else todo_settings['path']['pom']
+        todo_settings['path']['db'] = todo_settings['path']['plugin'] if 'db' not in todo_settings['path'].keys() or todo_settings['path']['db'] is None else todo_settings['path']['db']
+        self.todo_pom = os.path.join(todo_settings['path']['pom'], 'todo.pom')
+        self.todo_db_fn = os.path.join(todo_settings['path']['db'], self.param['todo.db'])
+        self.todo_menu = os.path.join(todo_settings['path']['plugin'], self.param['todo.sublime-menu'])
+        self.todo_menu_base = os.path.join(todo_settings['path']['plugin'], self.param['todo_base.sublime-menu'])
+
         self.todo_db_access('link')
-# ---------------------------------------------------------------------------------------------------------------------
 
     def todo_db_access(self, cmd):
         if 'link' == cmd:
@@ -113,6 +113,8 @@ class Todo(Scrpt):
             self.todo_history_holes = None
         else:
             self.error('Wrong cmd: %s' % cmd)
+# ---------------------------------------------------------------------------------------------------------------------
+
 
     def _get_timestamp(self):
         """Get current date/time stamp. Return dict with date/time values + date&time formatted strings."""
@@ -358,8 +360,8 @@ class Todo(Scrpt):
         if extract_history:
             _, todo_buffers['history'] = self._extract_tbl_buffer(todo_pom_buffer[i:], {'start': self.tbl['re']['history']['header'], 'stop': self.tbl['re']['pointline']})
         # self.info(todo_buffers['timestamp'])
-        self.info(todo_buffers['today'])
-        self.info(todo_buffers['sometime'])
+        # self.info(todo_buffers['today'])
+        # self.info(todo_buffers['sometime'])
         # self.info(todo_buffers['history'])
         return todo_buffers
 
@@ -596,4 +598,4 @@ class Todo(Scrpt):
 
 
 if __name__ == "__main__":
-    Todo().run()
+    Todo (path2do={ 'plugin': ''}).run()

@@ -1,6 +1,6 @@
 import sublime
 import sublime_plugin
-# import os
+import os
 import sys
 
 
@@ -13,8 +13,14 @@ def plugin_loaded():
     global settings
     settings = sublime.load_settings(SETTINGS_FILE)
 
+    if settings.has("env"):
+        todo_settings = settings.get("env")[sys.platform]['todo']
+        pythonpath = settings.get("env")[sys.platform]['pythonpath']
+    else:
+        todo_settings = settings.get("todo")
+        pythonpath = settings.get("pythonpath")
+
     # update module search path
-    pythonpath = settings.get("PYTHONPATH")
     # pythonpath = os.environ[PYTHONPATH'']
     if pythonpath:
         pythonpath = pythonpath.split(';')
@@ -24,7 +30,7 @@ def plugin_loaded():
 
     global todo
     from Todo import Todo
-    todo = Todo.Todo(path2do_pom=settings.get('path2do_pom'))
+    todo = Todo.Todo(todo_settings=todo_settings)
 
 
 class TodoMenuCmdCommand(sublime_plugin.WindowCommand):

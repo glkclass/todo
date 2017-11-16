@@ -3,6 +3,39 @@
 	[
 		"pom"
 	],
-	"path2do_pom": "C:/avv/prtble/st3/Data/Packages/Todo",
-	"PYTHONPATH": "C:/avv/prtble/st3/Data/Packages/Todo;C:/avv/design/_avv/scrpt/_Scrpt;C:\\Python35\\python35.zip;C:\\Python35\\DLLs;C:\\Python35\\lib;C:\\Python35;C:\\Python35\\lib\\site-packages"
+
+	"env" : 
+	{
+		"linux": 	
+		{
+			"pythonpath": "/home/avoloshchuk/design/_Scrpt;/usr/lib/python3/dist-packages;/usr/local/lib/python3.5/dist-packages;/home/avoloshchuk/.local/lib/python3.5/site-packages",
+
+			"todo": 
+			{
+				"path" : 
+				{
+					"plugin": "/home/avoloshchuk/prtble/sublime_text_3/Data/Packages/Todo"
+				}
+			},
+		},
+
+
+
+		"win32": 	
+		{
+			"pythonpath": "C:/avv/prtble/st3/Data/Packages/Todo;C:/avv/design/_avv/scrpt/_Scrpt;C:\\Python35\\python35.zip;C:\\Python35\\DLLs;C:\\Python35\\lib;C:\\Python35;C:\\Python35\\lib\\site-packages;",
+			
+			"todo": 
+			{
+				"path" : 
+				{
+					"plugin": "C:/avv/prtble/st3/Data/Packages/Todo"
+				}
+			},
+		},
+
+	},
+
+	
+	
 }
