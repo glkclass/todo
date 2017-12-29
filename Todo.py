@@ -1,3 +1,9 @@
+#     ______    __ 
+#    /_  __/_ _/ /__
+#     / / _ / _ / _ /
+#    /_/___/___/___/
+#
+
 import re
 import tinydb as db
 import operator
@@ -37,7 +43,7 @@ class Todo(Scrpt):
                         'sometime': {                    
                                         'header': 'TODO Sometime:',
                                         'tbl_header': '=DATE=        =TASK=',
-                                        'update_line': '/\n+\n-',
+                                        'update_line': '/ \n+ \n- ',
                                         'tbl_line': '%s    %s',
                                         'tomorrow_tag': 'todo tomorrow: ',
                                     },
@@ -554,7 +560,6 @@ class Todo(Scrpt):
 
         Args:   show_todo_sometime - show todo sometime tbl to todo.pom
                 show_todo_history - show todo history tbl to todo.pom
-`
         TODO timestamp and TODO today are present by default, TODO sometime & history - optional
         """
 

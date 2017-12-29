@@ -6,17 +6,17 @@
         "caption": "-"
       },
       {
-        "caption": "TODO info     Update",
+        "caption": "TODO info\tUpdate",
         "command": "todo_info_update",
         "id": "todo_info_update"
       },
       {
-        "caption": "TODO info     Save",
+        "caption": "TODO info\tSave",
         "command": "todo_info_save",
         "id": "todo_info_save"
       },
       {
-        "caption": "TODO table   Open",
+        "caption": "TODO table\tOpen",
         "command": "todo_tbl_open",
         "id": "todo_tbl_open"
       },
@@ -24,7 +24,7 @@
         "caption": "-"
       },
       {
-        "caption": "TODO table   New",
+        "caption": "TODO table\tNew",
         "children": [
           {
             "caption": "Today&Sometime&History",
@@ -62,7 +62,7 @@
         "caption": "-"
       },
       {
-        "caption": "TODO table   View",
+        "caption": "TODO table\tView",
         "children": [
           {
             "caption": "Today&Sometime&History",
@@ -100,7 +100,7 @@
         "caption": "-"
       },
       {
-        "caption": "TODO table   Utils",
+        "caption": "TODO\t\t\tUtils",
         "children": [
           {
             "caption": "DB unlink",
