@@ -22,7 +22,7 @@ class Todo(Scrpt):
                 'todo.sublime-menu':        'Main.sublime-menu',
                 'todo_base.sublime-menu':   'Main_base.sublime-menu',
                 'cache_size':               8,
-                'todo_history':             {'re': '2017/\d\d/\d\d', 'max_length': 0}
+                'todo_history':             {'re': '201\d/\d\d/\d\d', 'max_length': 0}
             }
 
     tbl = {
