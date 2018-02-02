@@ -468,7 +468,8 @@ class Todo(Scrpt):
 
     def _extract_todo_info(self, extract_history=False):
         """Read todo.pom and extract todo info (timestamp, shortterm tasks&est&pom&sta, sometime todo)"""
-        line_buffer = self.util.file.load(self.todo_pom, 'txt', rstrip='\n')
+        line_buffer = self.util.file.load(self.todo_pom, 'txt')
+        line_buffer = [item.rstrip('\n') for item in line_buffer]
         todo_info = {}
         todo_info['buffers'] = self._extract_todo_tbl_buffers(line_buffer, extract_history)
         todo_info['date'], todo_info['time'] = self._parse_timestamp_header(todo_info['buffers']['timestamp'])
@@ -515,7 +516,9 @@ class Todo(Scrpt):
         todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
         todo_sometime_tbl = todo_info['buffers']['sometime'] + [''] if todo_info['buffers']['sometime'] else []
         todo_history_tbl = todo_info['buffers']['history'] + [''] if todo_info['buffers']['history'] else []
-        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+        foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
+        foo = [item + '\n' for item in foo]
+        self.util.file.save(foo, self.todo_pom, 'txt')
 
     def _long_break_cmd(self, task):
         self._short_break_cmd(task)
@@ -527,7 +530,9 @@ class Todo(Scrpt):
         todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
         todo_sometime_tbl = todo_info['buffers']['sometime'] + [''] if todo_info['buffers']['sometime'] else []
         todo_history_tbl = todo_info['buffers']['history'] + [''] if todo_info['buffers']['history'] else []
-        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+        foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
+        foo = [item + '\n' for item in foo]
+        self.util.file.save(foo, self.todo_pom, 'txt')
 
 # API methods
     cmd_handler = {'short_break': _short_break_cmd, 'long_break': _long_break_cmd, 'ok': _ok_cmd}
@@ -552,7 +557,10 @@ class Todo(Scrpt):
         todo_today_tbl = self._generate_todo_today(pending_tasks=pending_tasks)
         todo_sometime_tbl = self._generate_todo_sometime() + [''] if show_todo_sometime else []
         todo_history_tbl = self._generate_todo_history() if show_todo_history else []
-        self.util.file.save([self._generate_timestamp_header()['day_time'], ''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+
+        foo = [self._generate_timestamp_header()['day_time'], ''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
+        foo = [item + '\n' for item in foo]
+        self.util.file.save(foo, self.todo_pom, 'txt')
 
     def todo_tbl_view(self, show_todo_sometime=False, show_todo_history=False):
         """
@@ -566,7 +574,9 @@ class Todo(Scrpt):
         todo_info = self._extract_todo_info(True)
         todo_sometime_tbl = self._generate_todo_sometime() + [''] if show_todo_sometime else []
         todo_history_tbl = self._generate_todo_history() if show_todo_history else []
-        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_info['buffers']['today'] + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+        foo = todo_info['buffers']['timestamp'] + [''] + todo_info['buffers']['today'] + [''] + todo_sometime_tbl + todo_history_tbl
+        foo = [item + '\n' for item in foo]
+        self.util.file.save(foo, self.todo_pom, 'txt')
 
     def todo_info_save(self):
         """Extract todo info from todo.pom and save it to db. Regenerate todo.pom with updated history"""
@@ -576,7 +586,9 @@ class Todo(Scrpt):
         todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
         todo_sometime_tbl = self._generate_todo_sometime() + [''] if todo_info['buffers']['sometime'] else []
         todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
-        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+        foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
+        foo = [item + '\n' for item in foo]
+        self.util.file.save(foo, self.todo_pom, 'txt')
 
     def todo_info_update(self):
         todo_info = self._extract_todo_info(True)
@@ -585,16 +597,18 @@ class Todo(Scrpt):
         todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
         todo_sometime_tbl = self._generate_todo_sometime() + [''] if todo_info['buffers']['sometime'] else []
         todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
-        self.util.file.save(todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl, self.todo_pom, 'txt', eol='\n')
+        foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
+        foo = [item + '\n' for item in foo]
+        self.util.file.save(foo, self.todo_pom, 'txt')
         return
 
     def main(self, **kwargs):
-        # self.todo_tbl_new(True, True)
+        self.todo_tbl_new(True, True)
         # self.todo_tbl_view(True, True)
         # self.todo_tbl_save()
         # self.todo_db_holes.purge()
         # self.todo_db_holes.insert({'year': 2017, 'Holidays': ['2017/10/14'], 'Vacation': ['2017/10/10'], 'Sick': ['2017/10/03']})
-        self._extract_todo_info(True)
+        # self._extract_todo_info(True)
         # self.todo_info_update()
         # self.todo_menu_cmd('short_break', 'xxx')
         # self._extract_todo_tbl_buffers()
@@ -603,4 +617,4 @@ class Todo(Scrpt):
 
 
 if __name__ == "__main__":
-    Todo (path2do={ 'plugin': ''}).run()
+    Todo (todo_settings={'path': {'plugin': ''}}).run()
