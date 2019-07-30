@@ -9,9 +9,9 @@ import tinydb as db
 import operator
 import os
 import datetime
-
+import util
+import file
 from Scrpt import Scrpt
-
 
 
 class Todo(Scrpt):
@@ -102,6 +102,7 @@ class Todo(Scrpt):
 
         self.todo_db_access('link')
 
+
     def todo_db_access(self, cmd):
         if 'link' == cmd:
             self.todo_db = db.TinyDB(self.todo_db_fn, indent=2)
@@ -124,7 +125,7 @@ class Todo(Scrpt):
 
     def _get_timestamp(self):
         """Get current date/time stamp. Return dict with date/time values + date&time formatted strings."""
-        foo = self.util.log.get_time()
+        foo = util.get_time()
         self.timestamp =    {   
                                 'date': foo['date'],
                                 'time': foo['time_wo_s'],
@@ -138,7 +139,7 @@ class Todo(Scrpt):
         else:
             timestamp = {'date': date, 'time': time}
 
-        week = self.log.get_week(timestamp['date'])
+        week = util.get_week(timestamp['date'])
         foo = {}
         foo['week'] = 'Week %02d' % week['num']
 
@@ -186,15 +187,15 @@ class Todo(Scrpt):
                 total['pom'] += item['pom']
                 est = str(item['est']) if 0 != item['est'] else ''
                 pom = str(item['pom']) if 0 != item['pom'] else ''
-                todo_today_tbl_line = ( self.util.allign_text(est, 5,),
-                                        self.util.allign_text({0: '', 1: 'Ok'}[item['sta']], 5),
-                                        self.util.allign_text(pom, 5),
+                todo_today_tbl_line = ( util.allign_text(est, 5,),
+                                        util.allign_text({0: '', 1: 'Ok'}[item['sta']], 5),
+                                        util.allign_text(pom, 5),
                                         item['task'])
                 todo_today_buffer.append(self.tbl['todo']['today']['tbl_task_line'] % todo_today_tbl_line)
 
-            todo_today_tbl_line = ( self.util.allign_text(str(total['est']), 5, alligner='-'),
-                                    self.util.allign_text('', 5, alligner='-'),
-                                    self.util.allign_text(str(total['pom']), 5, alligner='-'),
+            todo_today_tbl_line = ( util.allign_text(str(total['est']), 5, alligner='-'),
+                                    util.allign_text('', 5, alligner='-'),
+                                    util.allign_text(str(total['pom']), 5, alligner='-'),
                                     '= Total')
             todo_today_buffer.append(self.tbl['todo']['today']['tbl_task_line'] % todo_today_tbl_line)
 
@@ -242,7 +243,7 @@ class Todo(Scrpt):
     def _get_todo_history_holes(self, date_range, week_pre):
         history_buffer = []
         for item in date_range:
-            week = self.log.get_week(item)
+            week = util.get_week(item)
             if week_pre != week['num']:
                 headers = self._generate_timestamp_header(item)
                 history_buffer.extend(['', headers['week'], self.tbl['todo']['singleline']])
@@ -281,7 +282,7 @@ class Todo(Scrpt):
                 history_buffer, week_pre = self._get_todo_history_holes(missed_range, week_pre)
                 todo_history_buffer.extend(history_buffer)
 
-            week_cur = self.log.get_week(day['date'])['num']
+            week_cur = util.get_week(day['date'])['num']
             headers = self._generate_timestamp_header(day['date'], day['time_morning'], day['time_evening'])
             if week_pre != week_cur:
                 todo_history_buffer.extend(['', headers['week'], self.tbl['todo']['singleline']])
@@ -291,16 +292,16 @@ class Todo(Scrpt):
             todo_history_buffer.append('    %s' % self.tbl['todo']['today']['tbl_header'])
             total = {'est': 0, 'pom': 0}
             for item in day['todo_item']:
-                todo_today_tbl_line = ( self.util.allign_text(str(item['est']), 5,),
-                                        self.util.allign_text({0: '', 1: 'Ok'}[item['sta']], 5),
-                                        self.util.allign_text(str(item['pom']), 5),
+                todo_today_tbl_line = ( util.allign_text(str(item['est']), 5,),
+                                        util.allign_text({0: '', 1: 'Ok'}[item['sta']], 5),
+                                        util.allign_text(str(item['pom']), 5),
                                         item['task'])
                 todo_history_buffer.append('    ' + self.tbl['todo']['today']['tbl_task_line'] % todo_today_tbl_line)
                 total['est'] += item['est']
                 total['pom'] += item['pom']
-            todo_today_tbl_line = ( self.util.allign_text(str(total['est']), 5, alligner='-'),
-                                    self.util.allign_text('', 5, alligner='-'),
-                                    self.util.allign_text(str(total['pom']), 5, alligner='-'),
+            todo_today_tbl_line = ( util.allign_text(str(total['est']), 5, alligner='-'),
+                                    util.allign_text('', 5, alligner='-'),
+                                    util.allign_text(str(total['pom']), 5, alligner='-'),
                                     '= Total')
             todo_history_buffer.append('    ' + self.tbl['todo']['today']['tbl_task_line'] % todo_today_tbl_line)
 
@@ -468,7 +469,7 @@ class Todo(Scrpt):
 
     def _extract_todo_info(self, extract_history=False):
         """Read todo.pom and extract todo info (timestamp, shortterm tasks&est&pom&sta, sometime todo)"""
-        line_buffer = self.util.file.load(self.todo_pom, 'txt')
+        line_buffer = file.load(self.todo_pom, 'txt')
         line_buffer = [item.rstrip('\n') for item in line_buffer]
         todo_info = {}
         todo_info['buffers'] = self._extract_todo_tbl_buffers(line_buffer, extract_history)
@@ -479,7 +480,7 @@ class Todo(Scrpt):
         return todo_info
 
     def _add_tasks2menu(self, tasks):
-        todo_menu_base = self.util.file.load(self.todo_menu_base, 'json')
+        todo_menu_base = file.load(self.todo_menu_base, 'json')
         children = []
         for task in tasks:
             bar =   {
@@ -494,7 +495,7 @@ class Todo(Scrpt):
             children.append(bar)
         tasks_menu = {"caption": "Tasks", 'children': children}
         todo_menu_base[0]['children'].insert(0, tasks_menu)
-        self.util.file.save(todo_menu_base, self.todo_menu, 'json')
+        file.save(todo_menu_base, self.todo_menu, 'json')
         return
 
     def _task_update(self, cmd, task, todo_info):
@@ -518,7 +519,7 @@ class Todo(Scrpt):
         todo_history_tbl = todo_info['buffers']['history'] + [''] if todo_info['buffers']['history'] else []
         foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
         foo = [item + '\n' for item in foo]
-        self.util.file.save(foo, self.todo_pom, 'txt')
+        file.save(foo, self.todo_pom, 'txt')
 
     def _long_break_cmd(self, task):
         self._short_break_cmd(task)
@@ -532,7 +533,7 @@ class Todo(Scrpt):
         todo_history_tbl = todo_info['buffers']['history'] + [''] if todo_info['buffers']['history'] else []
         foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
         foo = [item + '\n' for item in foo]
-        self.util.file.save(foo, self.todo_pom, 'txt')
+        file.save(foo, self.todo_pom, 'txt')
 
 # API methods
     cmd_handler = {'short_break': _short_break_cmd, 'long_break': _long_break_cmd, 'ok': _ok_cmd}
@@ -560,7 +561,7 @@ class Todo(Scrpt):
 
         foo = [self._generate_timestamp_header()['day_time'], ''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
         foo = [item + '\n' for item in foo]
-        self.util.file.save(foo, self.todo_pom, 'txt')
+        file.save(foo, self.todo_pom, 'txt')
 
     def todo_tbl_view(self, show_todo_sometime=False, show_todo_history=False):
         """
@@ -576,7 +577,7 @@ class Todo(Scrpt):
         todo_history_tbl = self._generate_todo_history() if show_todo_history else []
         foo = todo_info['buffers']['timestamp'] + [''] + todo_info['buffers']['today'] + [''] + todo_sometime_tbl + todo_history_tbl
         foo = [item + '\n' for item in foo]
-        self.util.file.save(foo, self.todo_pom, 'txt')
+        file.save(foo, self.todo_pom, 'txt')
 
     def todo_info_save(self):
         """Extract todo info from todo.pom and save it to db. Regenerate todo.pom with updated history"""
@@ -588,7 +589,7 @@ class Todo(Scrpt):
         todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
         foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
         foo = [item + '\n' for item in foo]
-        self.util.file.save(foo, self.todo_pom, 'txt')
+        file.save(foo, self.todo_pom, 'txt')
 
     def todo_info_update(self):
         todo_info = self._extract_todo_info(True)
@@ -599,7 +600,7 @@ class Todo(Scrpt):
         todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
         foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
         foo = [item + '\n' for item in foo]
-        self.util.file.save(foo, self.todo_pom, 'txt')
+        file.save(foo, self.todo_pom, 'txt')
         return
 
     def main(self, **kwargs):

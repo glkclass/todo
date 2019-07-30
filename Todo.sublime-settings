@@ -8,7 +8,7 @@
 	{
 		"linux": 	
 		{
-			"pythonpath": "/home/avoloshchuk/design/_Scrpt;/usr/lib/python3/dist-packages;/usr/local/lib/python3.5/dist-packages;/home/avoloshchuk/.local/lib/python3.5/site-packages",
+			"pythonpath": "/home/avoloshchuk/design/scrpt;/usr/lib/python3/dist-packages",
 
 			"todo": 
 			{
@@ -23,13 +23,13 @@
 
 		"win32": 	
 		{
-			"pythonpath": "C:/avv/prtble/st3/Data/Packages/Todo;C:/avv/design/_avv/scrpt/_Scrpt;C:\\Python35\\python35.zip;C:\\Python35\\DLLs;C:\\Python35\\lib;C:\\Python35;C:\\Python35\\lib\\site-packages;",
+			"pythonpath": "C:/avv/prtble/sublime_text/Data/Packages/Todo;C:/avv/design/_avv/scrpt/scrpt;c:/Users/a.voloshchuk/AppData/Roaming/Python/Python37/site-packages",
 			
 			"todo": 
 			{
 				"path" : 
 				{
-					"plugin": "C:/avv/prtble/st3/Data/Packages/Todo"
+					"plugin": "C:/avv/prtble/sublime_text/Data/Packages/Todo"
 				}
 			},
 		},
