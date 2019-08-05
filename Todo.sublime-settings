@@ -1,41 +1,16 @@
 {
-	"extensions":
-	[
-		"pom"
-	],
-
+	"extensions":["pom"],
 	"env" : 
 	{
 		"linux": 	
 		{
-			"pythonpath": "/home/avoloshchuk/design/scrpt;/usr/lib/python3/dist-packages",
-
-			"todo": 
-			{
-				"path" : 
-				{
-					"plugin": "/home/avoloshchuk/prtble/sublime_text_3/Data/Packages/Todo"
-				}
-			},
+			"pythonpath": "",
+			"todo": {},
 		},
-
-
-
 		"win32": 	
 		{
 			"pythonpath": "C:/avv/prtble/sublime_text/Data/Packages/Todo;C:/avv/design/_avv/scrpt/scrpt;c:/Users/a.voloshchuk/AppData/Roaming/Python/Python37/site-packages",
-			
-			"todo": 
-			{
-				"path" : 
-				{
-					"plugin": "C:/avv/prtble/sublime_text/Data/Packages/Todo"
-				}
-			},
+			"todo": {},
 		},
-
 	},
-
-	
-	
 }
