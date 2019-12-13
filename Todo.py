@@ -2,12 +2,12 @@
 #    /_  __/_ _/ /__
 #     / / _ / _ / _ /
 #    /_/___/___/___/
-#
 
 import re
 import tinydb as db
 import operator
 import os
+import os.path as osp
 import datetime
 import util
 import file
@@ -96,10 +96,10 @@ class Todo(Scrpt):
         """
         Scrpt.__init__(self, path2log, scrpt_settings, todo_settings)
         self.settings['path']['plugin'] = os.path.join(os.getcwd(), self.settings['path']['plugin'])
-        self.todo_pom = self.settings['path']['todo.pom'] if path.isfile(self.settings['path']['todo.pom']) else os.path.join(self.settings['path']['plugin'], self.settings['path']['todo.pom'])
-        self.todo_db_fn = self.settings['path']['todo.db'] if path.isfile(self.settings['path']['todo.db']) else os.path.join(self.settings['path']['plugin'], self.settings['path']['todo.db'])
-        self.todo_main_menu = self.settings['path']['main.sublime-menu'] if path.isfile(self.settings['path']['main.sublime-menu']) else os.path.join(self.settings['path']['plugin'], self.settings['path']['main.sublime-menu'])
-        self.todo_main_base_menu = self.settings['path']['main_base.sublime-menu'] if path.isfile(self.settings['path']['main_base.sublime-menu']) else os.path.join(self.settings['path']['plugin'], self.settings['path']['main_base.sublime-menu'])
+        self.todo_pom = self.settings['path']['todo.pom'] if osp.isfile(self.settings['path']['todo.pom']) else os.path.join(self.settings['path']['plugin'], self.settings['path']['todo.pom'])
+        self.todo_db_fn = self.settings['path']['todo.db'] if osp.isfile(self.settings['path']['todo.db']) else os.path.join(self.settings['path']['plugin'], self.settings['path']['todo.db'])
+        self.todo_main_menu = self.settings['path']['main.sublime-menu'] if osp.isfile(self.settings['path']['main.sublime-menu']) else os.path.join(self.settings['path']['plugin'], self.settings['path']['main.sublime-menu'])
+        self.todo_main_base_menu = self.settings['path']['main_base.sublime-menu'] if osp.isfile(self.settings['path']['main_base.sublime-menu']) else os.path.join(self.settings['path']['plugin'], self.settings['path']['main_base.sublime-menu'])
         self.todo_db_access('link')
 
     def todo_db_access(self, cmd):
@@ -532,7 +532,6 @@ class Todo(Scrpt):
         foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
         foo = [item + '\n' for item in foo]
         file.save(foo, self.todo_pom, 'txt')
-
 
     # API methods
     todo_task_cmd_handler = {'short_break': _todo_task_short_break, 'long_break': _todo_task_long_break, 'ok': _todo_task_ok}

@@ -2,15 +2,10 @@
 #    /_  __/_ _/ /__ /   \/ /_
 #     / / _ / _ / _ / /  / _ /
 #    /_/___/___/___/___ /___/
-#
 
-import re
+
 import tinydb as db
-import operator
 import os
-import datetime
-import util
-import file
 import path
 from Scrpt import Scrpt
 
