@@ -31,8 +31,8 @@
             "command": "todo_tbl_new",
             "id": "todo_today_sometime_history_tbl_new",
             "args": {
-              "show_todo_history": "True",
-              "show_todo_sometime": "True"
+              "show_todo_history": true,
+              "show_todo_sometime": true
             }            
           },
           {
@@ -45,7 +45,7 @@
             "command": "todo_tbl_new",
             "id": "todo_today_sometime_tbl_new",
             "args": {
-              "show_todo_sometime": "True"
+              "show_todo_sometime": true
             }
           },
           {
@@ -53,7 +53,7 @@
             "command": "todo_tbl_new",
             "id": "todo_today_sometime_tbl_new",
             "args": {
-              "show_todo_history": "True"
+              "show_todo_history": true
             }
           }
         ]
@@ -69,8 +69,8 @@
             "command": "todo_tbl_view",
             "id": "todo_today_sometime_history_tbl_view",
             "args": {
-              "show_todo_history": "True",
-              "show_todo_sometime": "True"
+              "show_todo_history": true,
+              "show_todo_sometime": true
             }
           },
           {
@@ -83,7 +83,7 @@
             "command": "todo_tbl_view",
             "id": "todo_today_sometime_tbl_view",
             "args": {
-              "show_todo_sometime": "True"
+              "show_todo_sometime": true
             }
           },
           {
@@ -91,7 +91,7 @@
             "command": "todo_tbl_view",
             "id": "todo_today_history_tbl_view",
             "args": {
-              "show_todo_history": "True"
+              "show_todo_history": true
             }
           }
         ]

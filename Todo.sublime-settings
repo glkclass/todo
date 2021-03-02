@@ -1,16 +1,4 @@
 {
 	"extensions":["pom"],
-	"env" : 
-	{
-		"linux": 	
-		{
-			"pythonpath": "",
-			"todo": {},
-		},
-		"win32": 	
-		{
-			"pythonpath": "C:/avv/prtble/sublime_text/Data/Packages/Todo;C:/avv/design/_avv/scrpt/scrpt;c:/Users/a.voloshchuk/AppData/Roaming/Python/Python37/site-packages",
-			"todo": {},
-		},
-	},
+	"todo": {},
 }
