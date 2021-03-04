@@ -1,0 +1,27 @@
+{
+  "todo_holes": {}, 
+  "todo_sometime": {}, 
+  "todo_tomorrow": {}, 
+  "todo_history": {
+    "1": {
+      "time_evening": "18:31", 
+      "date": "2021/03/04", 
+      "todo_item": [
+        {
+          "task": "[env] install anaconda ide", 
+          "est": 0, 
+          "pom": 2, 
+          "sta": 0
+        }, 
+        {
+          "task": "[dev] implement todo sublime package", 
+          "pom": 1, 
+          "est": 0, 
+          "sta": 0
+        }
+      ], 
+      "time_morning": "17:24"
+    }
+  }, 
+  "_default": {}
+}

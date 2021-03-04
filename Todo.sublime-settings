@@ -1,4 +1,5 @@
 {
+	"pythonpath": ["c:/Users/avv/Anaconda3/envs/python33/Lib/site-packages"],
 	"extensions":["pom"],
 	"todo": {},
 }
