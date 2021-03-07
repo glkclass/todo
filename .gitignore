@@ -99,8 +99,8 @@ ENV/
 
 # mypy
 .mypy_cache/
-/todo.json
-/todo.pom
-/todo_cache.json
-/Main.sublime-menu
+*db.json
+*.pom
+*cache.json
+Main.sublime-menu
 scrpt
