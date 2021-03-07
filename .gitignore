@@ -99,7 +99,9 @@ ENV/
 
 # mypy
 .mypy_cache/
-/todo_db.json
+
+# Todo package resources
+todo_db.json
 todo.pom
 *cache.json
 Main.sublime-menu
