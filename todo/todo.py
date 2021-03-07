@@ -11,20 +11,21 @@ import tinydb as db
 from scrpt import util
 from scrpt import file
 # from scrpt import path
+from scrpt import log_util
 
 
 class Todo(object):
     """Support TODO-table usage: window version"""
     settings = {
-        'path_package': '',  # should be initialized with package folder path
-        'path': {
-            'todo.db': 'todo_db.json',  # pomodoro database
-            'todo.pom': 'todo.pom',  # today pomodoro txt list
-            'main.menu': 'Main.sublime-menu',  # Add Todo menu to Sublime
-            'main_base.menu': 'Main_base.sublime-menu',  # Base Todo menu to be extended
-        },
+        # should be initialized with sublime package folder path
+        'path_todo_package': '',
+        'name_db': 'todo_db.json',  # pomodoro database
+        'name_pom': 'todo.pom',  # today pomodoro txt list
+        'name_menu': 'Main.sublime-menu',  # Add Todo menu to Sublime
+        'name_base_menu': 'Main_base.sublime-menu',  # Base Todo menu to be extended
+
         'cache_size': 8,
-        'todo_history': {'re': r'201\d/\d\d/\d\d', 'max_length': 0}
+        'todo_history': {'re': r'202\d/\d\d/\d\d', 'max_length': 0}  # filter to display history
     }
 
     tbl = {
@@ -81,29 +82,27 @@ class Todo(object):
         """
         Todo constructor.
         """
-        # add user settings
-        self.settings.update(todo_settings)
+        # Create logger
+        self.log = log_util.get_logger(__name__)
+
+        # get path to sublime package folder
+        path_todo_package = todo_settings.get('path_todo_package', '')
 
         # init path to resources
-        self.todo_pom = osp.join(
-            self.settings['path_todo_package'],
-            self.settings['path']['todo.pom'])
-        self.todo_db_fn = osp.join(
-            self.settings['path_todo_package'],
-            self.settings['path']['todo.db'])
-        self.todo_main_menu = osp.join(
-            self.settings['path_todo_package'],
-            self.settings['path']['main.menu'])
-        self.todo_main_base_menu = osp.join(
-            self.settings['path_todo_package'],
-            self.settings['path']['main_base.menu'])
+        self.settings['path_pom'] = osp.join(path_todo_package, self.settings['name_pom'])
+        self.settings['path_db'] = osp.join(path_todo_package, self.settings['name_db'])
+        self.settings['path_menu'] = osp.join(path_todo_package, self.settings['name_menu'])
+        self.settings['path_base_menu'] = osp.join(path_todo_package, self.settings['name_base_menu'])
+
+        # add user settings (possibly overwrite path to resources)
+        self.settings.update(todo_settings)
 
         # load/create Todo db
         self.todo_db_link()
 
     def todo_db_link(self):
         """Link Todo database"""
-        self.todo_db = db.TinyDB(self.todo_db_fn, indent=2)
+        self.todo_db = db.TinyDB(self.settings['path_db'], indent=2)
         self.todo_db_history = self.todo_db.table('todo_history')
         self.todo_db_sometime = self.todo_db.table('todo_sometime')
         self.todo_db_tomorrow = self.todo_db.table('todo_tomorrow')
@@ -119,7 +118,6 @@ class Todo(object):
         self.todo_db_tomorrow = None
         self.todo_db_holes = None
         self.todo_history_holes = None
-
     # ---------------------------------------------------------------------------------------------------------------------
 
     def _get_timestamp(self):
@@ -159,6 +157,15 @@ class Todo(object):
             foo['day_time_delta'] = 'Hole'
 
         return foo
+
+    def _display2pom(self, line_buffer):
+        """
+        Store line buffer, containing TODO tables to todo.pom
+
+        Args: line_buffer - list of strings
+        """
+        line_buffer = [item + '\n' for item in line_buffer]
+        file.save(line_buffer, self.settings['path_pom'], 'txt')
 
     def _generate_todo_today(self, pending_tasks=[], tasks4tbl=[]):
         """Generate TODO today table part"""
@@ -201,7 +208,7 @@ class Todo(object):
 
         else:
             todo_today_buffer.append(self.tbl['todo']['today']['tbl_ph_line'])
-        todo_today_buffer.append(self.tbl['todo']['singleline'])
+        todo_today_buffer.extend([self.tbl['todo']['singleline'], ''])
         return todo_today_buffer
 
     def _generate_todo_sometime(self):
@@ -224,7 +231,7 @@ class Todo(object):
         for item in todo_sometime:
             todo_sometime_buffer.append(self.tbl['todo']['sometime']['tbl_line'] % (item['date'], item['task']))
 
-        todo_sometime_buffer.append(self.tbl['todo']['singleline'])
+        todo_sometime_buffer.extend([self.tbl['todo']['singleline'], ''])
         return todo_sometime_buffer
 
     def _get_date_range(self, start_date, end_date):
@@ -487,7 +494,7 @@ class Todo(object):
 
     def _extract_todo_info(self, extract_history=False):
         """Read todo.pom and extract todo info (timestamp, shortterm tasks&est&pom&sta, sometime todo)"""
-        line_buffer = file.load(self.todo_pom, 'txt')
+        line_buffer = file.load(self.settings['path_pom'], 'txt')
         line_buffer = [item.rstrip('\n') for item in line_buffer]
         todo_info = {}
         todo_info['buffers'] = self._extract_todo_tbl_buffers(line_buffer, extract_history)
@@ -498,7 +505,7 @@ class Todo(object):
         return todo_info
 
     def _add_tasks2menu(self, tasks):
-        todo_main_base_menu = file.load(self.todo_main_base_menu, 'json')
+        todo_main_base_menu = file.load(self.settings['path_base_menu'], 'json')
         children = []
         for task in tasks:
             bar = {
@@ -519,7 +526,7 @@ class Todo(object):
             children.append(bar)
         tasks_menu = {"caption": "Tasks", 'children': children}
         todo_main_base_menu[0]['children'].insert(0, tasks_menu)
-        file.save(todo_main_base_menu, self.todo_main_menu, 'json')
+        file.save(todo_main_base_menu, self.settings['path_menu'], 'json')
         return
 
     def _task_update(self, cmd, task, todo_info):
@@ -543,8 +550,7 @@ class Todo(object):
         todo_sometime_tbl = todo_info['buffers']['sometime'] + [''] if todo_info['buffers']['sometime'] else []
         todo_history_tbl = todo_info['buffers']['history'] + [''] if todo_info['buffers']['history'] else []
         foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
-        foo = [item + '\n' for item in foo]
-        file.save(foo, self.todo_pom, 'txt')
+        self._display2pom(foo)
 
     def _todo_task_long_break(self, task):
         self._todo_task_short_break(task)
@@ -557,8 +563,7 @@ class Todo(object):
         todo_sometime_tbl = todo_info['buffers']['sometime'] + [''] if todo_info['buffers']['sometime'] else []
         todo_history_tbl = todo_info['buffers']['history'] + [''] if todo_info['buffers']['history'] else []
         foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
-        foo = [item + '\n' for item in foo]
-        file.save(foo, self.todo_pom, 'txt')
+        self._display2pom(foo)
 
     # API methods
     todo_task_cmd_handler = {
@@ -576,68 +581,72 @@ class Todo(object):
         Generate TODO tables and display them in todo.pom
 
         Args:
-        show_todo_sometime -- display or don't TODO 'sometime' table
-        show_todo_history -- display or don't TODO 'history' table
+        show_todo_sometime -- whether to display TODO 'sometime' table
+        show_todo_history -- whether to display TODO 'history' table
 
-        Generate empty TODO 'today', 'history'(optional) and 'sometime'(optional) tables
+        Generate empty TODO 'today', 'sometime'(optional) and 'history'(optional) tables
         """
+        print('xxx')
 
         pending_tasks = [item['task'] for item in self.todo_db_tomorrow.all()]
         self.todo_db_tomorrow.purge()
-        todo_today_tbl = self._generate_todo_today(pending_tasks=pending_tasks)
-        todo_sometime_tbl = self._generate_todo_sometime() + [''] if show_todo_sometime else []
 
-        todo_history_tbl = self._generate_todo_history() if show_todo_history else []
-
-        foo = [self._generate_timestamp_header()['day_time'], ''] + \
-            todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
-        foo = [item + '\n' for item in foo]
-        file.save(foo, self.todo_pom, 'txt')
+        foo = [self._generate_timestamp_header()['day_time'], '']
+        foo.extend(self._generate_todo_today(pending_tasks=pending_tasks))
+        if show_todo_sometime:
+            foo.extend(self._generate_todo_sometime())
+        if show_todo_history:
+            foo.extend(self._generate_todo_history())
+        self._display2pom(foo)
 
     def todo_tbl_view_cmd(self, show_todo_sometime=False, show_todo_history=False):
         """
-        Regenerate todo.pom with given settings
+        Change todo.pom view: add/remove Todo sometimes & history tables
 
-        Args:   show_todo_sometime - show todo sometime tbl to todo.pom
-                show_todo_history - show todo history tbl to todo.pom
-        TODO timestamp and TODO today are present by default, TODO sometime & history - optional
+        Args:   show_todo_sometime - whether to display TODO 'sometime' table
+                show_todo_history - whether to display TODO 'history' table
+        Timestamp header and TODO today are present by default, TODO sometime & history - optional
         """
 
         todo_info = self._extract_todo_info(True)
-        todo_sometime_tbl = self._generate_todo_sometime() + [''] if show_todo_sometime else []
-        todo_history_tbl = self._generate_todo_history() if show_todo_history else []
-        foo = todo_info['buffers']['timestamp'] + [''] + \
-            todo_info['buffers']['today'] + [''] + todo_sometime_tbl + todo_history_tbl
-
-        foo = [item + '\n' for item in foo]
-        file.save(foo, self.todo_pom, 'txt')
+        foo = todo_info['buffers']['timestamp'] + ['']
+        foo.extend(todo_info['buffers']['today'] + [''])
+        if show_todo_sometime:
+            foo.extend(self._generate_todo_sometime())
+        if show_todo_history:
+            foo.extend(self._generate_todo_history())
+        self._display2pom(foo)
 
     def todo_info_save_cmd(self):
-        """Extract todo info from todo.pom and save it to db. Regenerate todo.pom with updated history"""
+        """Extract todo info from todo.pom and save it to todo.db. Update todo.pom content"""
         todo_info = self._extract_todo_info(True)
         self._todo_today_save(todo_info)
         self._todo_sometime_save(todo_info)
-        todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
-        todo_sometime_tbl = self._generate_todo_sometime() + [''] if todo_info['buffers']['sometime'] else []
-        todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
-        foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
-        foo = [item + '\n' for item in foo]
-        file.save(foo, self.todo_pom, 'txt')
+
+        foo = todo_info['buffers']['timestamp'] + ['']
+        foo.extend(self._generate_todo_today(tasks4tbl=todo_info['today']))
+        if todo_info['buffers']['sometime']:
+            foo.extend(self._generate_todo_sometime())
+        if todo_info['buffers']['history']:
+            foo.extend(self._generate_todo_history())
+        self._display2pom(foo)
 
     def todo_info_update_cmd(self):
+        """Extract todo/sometime tasks from todo.pom and save them to todo.db. Update todo.pom content"""
         todo_info = self._extract_todo_info(True)
         self._add_tasks2menu(item['task'] for item in todo_info['today'])
         self._todo_sometime_save(todo_info)
-        todo_today_tbl = self._generate_todo_today(tasks4tbl=todo_info['today'])
-        todo_sometime_tbl = self._generate_todo_sometime() + [''] if todo_info['buffers']['sometime'] else []
-        todo_history_tbl = self._generate_todo_history() if todo_info['buffers']['history'] else []
-        foo = todo_info['buffers']['timestamp'] + [''] + todo_today_tbl + [''] + todo_sometime_tbl + todo_history_tbl
-        foo = [item + '\n' for item in foo]
-        file.save(foo, self.todo_pom, 'txt')
-        return
+
+        foo = todo_info['buffers']['timestamp'] + ['']
+        foo.extend(self._generate_todo_today(tasks4tbl=todo_info['today']))
+        if todo_info['buffers']['sometime']:
+            foo.extend(self._generate_todo_sometime())
+        if todo_info['buffers']['history']:
+            foo.extend(self._generate_todo_history())
+        self._display2pom(foo)
 
     def main(self, **kwargs):
-        print(self._generate_todo_today())
+        # print(self._generate_todo_today())
 
         # self.todo_tbl_new_cmd(True, True)
         # self.todo_tbl_view_cmd(True, True)
@@ -654,4 +663,5 @@ class Todo(object):
 
 
 if __name__ == "__main__":
-    todo = Todo().main()
+    todo = Todo(todo_settings={"path_todo_package": "c:/prtble/sublime_text/Data/Packages/Todo"})
+    todo.todo_tbl_new_cmd(True, True)
