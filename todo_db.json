@@ -51,7 +51,7 @@
         {
           "task": "[dev] Todo package", 
           "sta": 0, 
-          "pom": 6, 
+          "pom": 10, 
           "est": 0
         }, 
         {
@@ -61,7 +61,7 @@
           "est": 0
         }
       ], 
-      "time_evening": "17:11"
+      "time_evening": "17:22"
     }
   }, 
   "todo_holes": {}, 
