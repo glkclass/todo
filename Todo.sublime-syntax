@@ -17,7 +17,7 @@ variables:
 
   v_todo_history_header: 'TODO History\:'
   v_todo_history_tbl_header: '\|=EST=\|=STA=\|=POM=\|=TASK='
-  v_todo_history_dayoff: '((Weekend)|(Vacation)|(Sick dayoff)|(Missed))'
+  v_todo_history_dayoff: '((Weekend)|(Day off))'
 
 contexts:
   # The prototype context is prepended to all contexts but those setting

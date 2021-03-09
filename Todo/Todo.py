@@ -25,7 +25,8 @@ class Todo(object):
         'name_base_menu': 'Main_base.sublime-menu',  # Base Todo menu to be extended
 
         'cache_size': 8,
-        'todo_history': {'re': r'202\d/\d\d/\d\d', 'max_length': 0}  # filter to display history
+        'todo_history': {'re': r'202\d/\d\d/\d\d', 'max_length': 0},  # filter to display history
+        'weekend': ['Sat', 'Sun']  # to be displayed in history as Weekend
     }
 
     tbl = {
@@ -83,7 +84,7 @@ class Todo(object):
         Todo constructor.
         """
         # Create logger
-        self.log = log_util.get_logger(__name__)
+        self.log = log_util.get_logger(logger_name="Todo", level="INFO")
 
         # get path to sublime package folder
         path_todo_package = todo_settings.get('path_todo_package', '')
@@ -106,9 +107,6 @@ class Todo(object):
         self.todo_db_history = self.todo_db.table('todo_history')
         self.todo_db_sometime = self.todo_db.table('todo_sometime')
         self.todo_db_tomorrow = self.todo_db.table('todo_tomorrow')
-        self.todo_db_holes = self.todo_db.table('todo_holes')
-        self.todo_history_holes = self.todo_db_holes.get(
-            db.Query()['year'] == 2021)
 
     def todo_db_unlink(self):
         """Unlink Todo database"""
@@ -116,8 +114,6 @@ class Todo(object):
         self.todo_db_history = None
         self.todo_db_sometime = None
         self.todo_db_tomorrow = None
-        self.todo_db_holes = None
-        self.todo_history_holes = None
     # ---------------------------------------------------------------------------------------------------------------------
 
     def _get_timestamp(self):
@@ -249,29 +245,22 @@ class Todo(object):
         return date_range
 
     def _get_todo_history_holes(self, date_range, week_pre):
-        """"""
+        """Add missed days/weeks to history table: weekends or days off"""
         history_buffer = []
         for item in date_range:
             week = util.get_week(item)
             if week_pre != week['num']:
                 headers = self._generate_timestamp_header(item)
                 history_buffer.extend(['', headers['week'], self.tbl['todo']['singleline']])
-            if week['day'] in ('Sat', 'Sun'):
+            if week['day'] in self.settings['weekend']:
                 history_buffer.append('  %s    Weekend' % self._generate_timestamp_header(item)['day'])
-            elif item in self.todo_history_holes['Holidays']:
-                history_buffer.append('  %s    Holiday' % self._generate_timestamp_header(item)['day'])
-            elif item in self.todo_history_holes['Vacation']:
-                history_buffer.append('  %s    Vacation' % self._generate_timestamp_header(item)['day'])
-            elif item in self.todo_history_holes['Sick']:
-                history_buffer.append('  %s    Sick dayoff' % self._generate_timestamp_header(item)['day'])
             else:
-                history_buffer.append('  %s    Missed' % self._generate_timestamp_header(item)['day'])
+                history_buffer.append('  %s    Day off' % self._generate_timestamp_header(item)['day'])
             week_pre = week['num']
-        # self.log.info (history_buffer)
         return history_buffer, week_pre
 
     def _generate_todo_history(self):
-        """Generate history part of TODO table. History duration, stop date etc are defined by settings."""
+        """Generate history part of TODO table. Historical range date is defined by settings."""
         todo_history = self.todo_db_history.search((db.Query().date.search(self.settings['todo_history']['re'])))
         todo_history.sort(key=operator.itemgetter('date'))
         todo_history.reverse()
@@ -586,8 +575,6 @@ class Todo(object):
 
         Generate empty TODO 'today', 'sometime'(optional) and 'history'(optional) tables
         """
-        print('xxx')
-
         pending_tasks = [item['task'] for item in self.todo_db_tomorrow.all()]
         self.todo_db_tomorrow.purge()
 
@@ -651,9 +638,6 @@ class Todo(object):
         # self.todo_tbl_new_cmd(True, True)
         # self.todo_tbl_view_cmd(True, True)
         # self.todo_tbl_save_cmd()
-        # self.todo_db_holes.purge()
-        # self.todo_db_holes.insert(
-        #     {'year': 2017, 'Holidays': ['2017/10/14'], 'Vacation': ['2017/10/10'], 'Sick': ['2017/10/03']})
         # self._extract_todo_info(True)
         # self.todo_info_update_cmd()
         # self.todo_task_cmd('short_break', 'xxx')
