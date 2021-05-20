@@ -13,7 +13,6 @@ from scrpt import file
 # from scrpt import path
 from scrpt import log_util
 
-
 class Todo(object):
     """Support TODO-table usage: window version"""
     settings = {
@@ -647,5 +646,7 @@ class Todo(object):
 
 
 if __name__ == "__main__":
+    print ('Started')
     todo = Todo(todo_settings={"path_todo_package": "c:/prtble/sublime_text/Data/Packages/Todo"})
     todo.todo_tbl_new_cmd(True, True)
+    print ('Finished')
